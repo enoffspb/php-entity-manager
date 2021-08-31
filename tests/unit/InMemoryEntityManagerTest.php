@@ -2,7 +2,8 @@
 
 namespace enoffspb\EntityManager\Tests\Unit;
 
-use enoffspb\EntityManager\InMemoryEntityManager;
+use enoffspb\EntityManager\Driver\InMemoryDriver;
+use enoffspb\EntityManager\EntityManager;
 use enoffspb\EntityManager\Interfaces\EntityManagerInterface;
 use enoffspb\EntityManager\Tests\Entity\Example;
 use PHPUnit\Framework\TestCase;
@@ -13,7 +14,8 @@ class InMemoryEntityManagerTest extends TestCase
 
     public function setUp(): void
     {
-        $this->entityManager = new InMemoryEntityManager();
+        $driver = new InMemoryDriver();
+        $this->entityManager = new EntityManager($driver);
     }
 
     public function testSaveNewEntity()
