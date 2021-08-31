@@ -5,12 +5,10 @@ namespace enoffspb\EntityManager\Interfaces;
 use enoffspb\EntityManager\EntityMetadata;
 
 /**
- * @template T
+ * @template T of object
  */
 interface RepositoryInterface
 {
-    public function __construct(EntityMetadata $metadata);
-
     /**
      * @param mixed $primaryKey
      * @return T|null

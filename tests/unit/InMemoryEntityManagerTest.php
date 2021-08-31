@@ -10,12 +10,21 @@ use PHPUnit\Framework\TestCase;
 
 class InMemoryEntityManagerTest extends TestCase
 {
-    private EntityManagerInterface  $entityManager;
+    private static EntityManagerInterface $entityManager;
 
-    public function setUp(): void
+    public static function setUpBeforeClass(): void
     {
+        parent::setUpBeforeClass();
+
         $driver = new InMemoryDriver();
-        $this->entityManager = new EntityManager($driver);
+        self::$entityManager = new EntityManager($driver);
+
+        $driver->setEntityManager(self::$entityManager);
+    }
+
+    private function getEntityManager(): EntityManagerInterface
+    {
+        return self::$entityManager;
     }
 
     public function testSaveNewEntity()
@@ -23,7 +32,7 @@ class InMemoryEntityManagerTest extends TestCase
         $entity = new Example();
         $entity->name = 'Test entity';
 
-        $res = $this->entityManager->save($entity);
+        $res = $this->getEntityManager()->save($entity);
 
         $this->assertTrue($res);
         $this->assertNotNull($entity->id);
@@ -36,7 +45,7 @@ class InMemoryEntityManagerTest extends TestCase
      */
     public function testGetEntity(int $newEntityId)
     {
-        $repository = $this->entityManager->getRepository(Example::class);
+        $repository = $this->getEntityManager()->getRepository(Example::class);
 
         $entity = $repository->getByPk($newEntityId);
         $this->assertInstanceOf(Example::class, $entity);

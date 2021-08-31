@@ -19,12 +19,12 @@ class EntityMetadata
         return $this->mapping;
     }
 
-    public function createColumnsFromDescribe(array $describeRows)
-    {
-        foreach($describeRows as $row) {
-            $column = new Column();
-            $column->loadFromDescribe($row);
-            $this->mapping[$column->name] = $column;
-        }
-    }
+//    public function createColumnsFromDescribe(array $describeRows)
+//    {
+//        foreach($describeRows as $row) {
+//            $column = new Column();
+//            $column->loadFromDescribe($row);
+//            $this->mapping[$column->name] = $column;
+//        }
+//    }
 }

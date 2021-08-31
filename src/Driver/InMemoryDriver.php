@@ -4,13 +4,13 @@ namespace enoffspb\EntityManager\Driver;
 
 use enoffspb\EntityManager\EntityMetadata;
 use enoffspb\EntityManager\Interfaces\DriverInterface;
-use enoffspb\EntityManager\Interfaces\EntityManagerInterface;
+use enoffspb\EntityManager\Repository\InMemoryGenericRepository;
 
 class InMemoryDriver extends BaseDriver implements DriverInterface
 {
-    public function getRepository(string $entityClass)
+    public function getGenericRepositoryClass(): string
     {
-        // TODO: Implement getRepository() method.
+        return InMemoryGenericRepository::class;
     }
 
     public function createMetadata($entityClass, $entityConfig): EntityMetadata
@@ -18,8 +18,8 @@ class InMemoryDriver extends BaseDriver implements DriverInterface
         $metadata = new EntityMetadata();
         $metadata->entityClass = $entityClass;
 
-        if($entityConfig) {
-            foreach($entityConfig as $k => $v) {
+        if ($entityConfig) {
+            foreach ($entityConfig as $k => $v) {
                 $metadata->$k = $v;
             }
         }
@@ -35,28 +35,61 @@ class InMemoryDriver extends BaseDriver implements DriverInterface
         $metadata = $this->getMetadata($entityClass);
         $pk = $metadata->primaryKey;
 
-        if(!isset($this->storage[$entityClass])) {
-            $this->storage[$entityClass] = [];
-        }
-
-        $nextId = count($this->storage[$entityClass]) + 1;
+        $nextId = $this->getNextPk($entityClass);
         $entity->$pk = $nextId;
 
-        $this->storage[$entityClass][$nextId] = $entity;
+        $this->cacheEntity($entity);
 
-//        $repository = $this->getRepository(get_class($entity));
-//        $repository->attach($entity);
+        $repository = $this->getEntityManager()->getRepository(get_class($entity));
+        $repository->attach($entity);
 
         return true;
     }
 
     public function update(object $entity): bool
     {
-        // TODO: Implement update() method.
+        throw new \Exception('TODO: Implement update() method.');
     }
 
     public function delete(object $entity): bool
     {
-        // TODO: Implement delete() method.
+        throw new \Exception('TODO: Implement delete() method.');
+    }
+
+    /**
+     * @return mixed A scalar value for next primary key
+     */
+    public function getNextPk(string $entityClass)
+    {
+        if(!isset($this->storage[$entityClass])) {
+            $this->storage[$entityClass] = [];
+        }
+
+        $nextId = count($this->storage[$entityClass]) + 1;
+
+        return $nextId;
+    }
+
+    public function cacheEntity(object $entity): void
+    {
+        $entityClass = get_class($entity);
+
+        if(!isset($this->storage[$entityClass])) {
+            $this->storage[$entityClass] = [];
+        }
+
+        $metadata = $this->getMetadata($entityClass);
+        $pk = $metadata->primaryKey;
+
+        $this->storage[$entityClass][$entity->$pk] = $entity;
+    }
+
+    public function getEntity(string $entityClass, $id): ?object
+    {
+        if(!isset($this->storage[$entityClass]) || !isset($this->storage[$entityClass][$id])) {
+            return null;
+        }
+
+        return $this->storage[$entityClass][$id];
     }
 }

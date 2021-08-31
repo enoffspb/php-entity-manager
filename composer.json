@@ -23,8 +23,8 @@
             "enoffspb\\EntityManager\\Tests\\": "tests/src"
         }
     },
-    "require": {},
     "require-dev": {
-        "phpunit/phpunit": "^9.5"
+        "phpunit/phpunit": "^9.5",
+        "phpstan/phpstan": "^0.12.96"
     }
 }

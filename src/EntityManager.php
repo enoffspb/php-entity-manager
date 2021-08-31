@@ -5,6 +5,7 @@ namespace enoffspb\EntityManager;
 use enoffspb\EntityManager\Interfaces\DriverInterface;
 use enoffspb\EntityManager\Interfaces\EntityManagerInterface;
 use enoffspb\EntityManager\Interfaces\RepositoryInterface;
+use enoffspb\EntityManager\Repository\GenericRepository;
 
 class EntityManager implements EntityManagerInterface
 {
@@ -50,12 +51,15 @@ class EntityManager implements EntityManagerInterface
         }
 
         $metadata = $this->driver->getMetadata($entityClass);
-        $repository = null;
+        $repositoryClass = null;
+
         if($metadata->repositoryClass !== null) {
-            $repository = new $metadata->repositoryClass;
+            $repositoryClass = $metadata->repositoryClass;
         } else {
-            $repository = new GenericRepository($metadata);
+            $repositoryClass = $this->driver->getGenericRepositoryClass();
         }
+
+        $repository = new $repositoryClass($metadata, $this->driver);
 
         $this->repositories[$entityClass] = $repository;
 
