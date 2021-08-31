@@ -5,6 +5,7 @@ namespace enoffspb\EntityManager;
 class EntityMetadata
 {
     public string $entityClass;
+    public ?string $repositoryClass = null;
     public string $tableName;
     public string $primaryKey = 'id';
 

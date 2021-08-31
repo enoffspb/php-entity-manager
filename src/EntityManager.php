@@ -4,6 +4,7 @@ namespace enoffspb\EntityManager;
 
 use enoffspb\EntityManager\Interfaces\DriverInterface;
 use enoffspb\EntityManager\Interfaces\EntityManagerInterface;
+use enoffspb\EntityManager\Interfaces\RepositoryInterface;
 
 class EntityManager implements EntityManagerInterface
 {
@@ -40,9 +41,25 @@ class EntityManager implements EntityManagerInterface
         return $this->entitiesConfig;
     }
 
-    public function getRepository(string $entityClass)
+    private array $repositories = [];
+
+    public function getRepository(string $entityClass): RepositoryInterface
     {
-        // TODO: Implement getRepository() method.
+        if(isset($this->repositories[$entityClass])) {
+            return $this->repositories[$entityClass];
+        }
+
+        $metadata = $this->driver->getMetadata($entityClass);
+        $repository = null;
+        if($metadata->repositoryClass !== null) {
+            $repository = new $metadata->repositoryClass;
+        } else {
+            $repository = new GenericRepository($metadata);
+        }
+
+        $this->repositories[$entityClass] = $repository;
+
+        return $repository;
     }
 
     public function save(object $entity): bool

@@ -27,6 +27,21 @@ class InMemoryEntityManagerTest extends TestCase
 
         $this->assertTrue($res);
         $this->assertNotNull($entity->id);
+
+        return $entity->id;
+    }
+
+    /**
+     * @depends testSaveNewEntity
+     */
+    public function testGetEntity(int $newEntityId)
+    {
+        $repository = $this->entityManager->getRepository(Example::class);
+
+        $entity = $repository->getByPk($newEntityId);
+        $this->assertInstanceOf(Example::class, $entity);
+
+        $this->assertEquals($newEntityId, $entity->id);
     }
 
 }
