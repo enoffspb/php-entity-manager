@@ -33,10 +33,10 @@ class InMemoryDriver extends BaseDriver implements DriverInterface
     {
         $entityClass = get_class($entity);
         $metadata = $this->getMetadata($entityClass);
-        $pk = $metadata->primaryKey;
+        $pkField = $metadata->primaryKey;
 
         $nextId = $this->getNextPk($entityClass);
-        $entity->$pk = $nextId;
+        $entity->$pkField = $nextId;
 
         $this->cacheEntity($entity);
 
@@ -48,12 +48,26 @@ class InMemoryDriver extends BaseDriver implements DriverInterface
 
     public function update(object $entity): bool
     {
-        throw new \Exception('TODO: Implement update() method.');
+        $this->cacheEntity($entity);
+
+        return true;
     }
 
     public function delete(object $entity): bool
     {
-        throw new \Exception('TODO: Implement delete() method.');
+        $entityClass = get_class($entity);
+        $metadata = $this->getMetadata($entityClass);
+        $pkField = $metadata->primaryKey;
+
+        $id = $entity->$pkField;
+
+        if(isset($this->storage[$entityClass]) && isset($this->storage[$entityClass][$id])) {
+            unset($this->storage[$entityClass][$id]);
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
