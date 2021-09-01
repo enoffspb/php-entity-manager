@@ -6,9 +6,10 @@ use enoffspb\EntityManager\Driver\InMemoryDriver;
 use enoffspb\EntityManager\EntityManager;
 use enoffspb\EntityManager\Interfaces\EntityManagerInterface;
 use enoffspb\EntityManager\Tests\Entity\Example;
+
 use PHPUnit\Framework\TestCase;
 
-class InMemoryEntityManagerTest extends TestCase
+class EntityManagerTest extends TestCase
 {
     private static EntityManagerInterface $entityManager;
 
@@ -51,6 +52,34 @@ class InMemoryEntityManagerTest extends TestCase
         $this->assertInstanceOf(Example::class, $entity);
 
         $this->assertEquals($newEntityId, $entity->id);
+
+        $repository->detach($entity);
+
+        $otherInstanceOfEntity = $repository->getByPk($newEntityId);
+        $this->assertEquals($entity->id, $otherInstanceOfEntity->id);
+
+        $this->assertEquals('Test entity', $otherInstanceOfEntity->name);
+
+        return $otherInstanceOfEntity;
+    }
+
+    /**
+     * @depends testGetEntity
+     */
+    public function testUpdateEntity(Example $entity)
+    {
+        $entity->name = 'New name';
+
+        $res = $this->getEntityManager()->update($entity);
+        $this->assertTrue($res);
+
+        $entityId = $entity->id;
+
+        $repo = $this->getEntityManager()->getRepository(Example::class);
+        $repo->detach($entity);
+
+        $entity = $repo->getByPk($entityId);
+        $this->assertEquals($entity->name, 'New name');
     }
 
 }

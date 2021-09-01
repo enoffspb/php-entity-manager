@@ -4,7 +4,7 @@ namespace enoffspb\EntityManager\Interfaces;
 
 interface EntityManagerInterface
 {
-    public function getRepository(string $entityClass);
+    public function getRepository(string $entityClass): RepositoryInterface;
 
     public function save(object $entity): bool;
     public function update(object $entity): bool;
