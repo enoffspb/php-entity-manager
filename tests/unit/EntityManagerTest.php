@@ -80,6 +80,22 @@ class EntityManagerTest extends TestCase
 
         $entity = $repo->getByPk($entityId);
         $this->assertEquals($entity->name, 'New name');
+
+        return $entity;
     }
 
+    /**
+     * @depends testUpdateEntity
+     */
+    public function testDeleteEntity(Example $entity)
+    {
+        $entityId = $entity->id;
+
+        $this->getEntityManager()->delete($entity);
+        unset($entity);
+
+        $entity = $this->getEntityManager()->getRepository(Example::class)->getByPk($entityId);
+
+        $this->assertNull($entity);
+    }
 }
