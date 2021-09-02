@@ -2,30 +2,20 @@
 
 namespace enoffspb\EntityManager\Tests\Unit;
 
-use enoffspb\EntityManager\Driver\InMemoryDriver;
-use enoffspb\EntityManager\EntityManager;
-use enoffspb\EntityManager\Interfaces\EntityManagerInterface;
+use enoffspb\EntityManager\Interfaces\DriverInterface;
 use enoffspb\EntityManager\Tests\Entity\Example;
 
-use PHPUnit\Framework\TestCase;
-
-class EntityManagerTest extends TestCase
+class EntityManagerTest extends BaseTest
 {
-    private static EntityManagerInterface $entityManager;
-
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
-
-        $driver = new InMemoryDriver();
-        self::$entityManager = new EntityManager($driver);
-
-        $driver->setEntityManager(self::$entityManager);
+        self::createEntityManager();
     }
 
-    private function getEntityManager(): EntityManagerInterface
+    public function testGetDriver()
     {
-        return self::$entityManager;
+        $this->assertInstanceOf(DriverInterface::class, $this->getEntityManager()->getDriver());
     }
 
     public function testSaveNewEntity()
