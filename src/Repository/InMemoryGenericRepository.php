@@ -10,13 +10,30 @@ use enoffspb\EntityManager\Interfaces\RepositoryInterface;
  */
 class InMemoryGenericRepository extends AbstractRepository implements RepositoryInterface
 {
-    public function getByPk($primaryKey): ?object
+    public function getById($id): ?object
     {
-        return $this->driver->getEntity($this->metadata->entityClass, $primaryKey);
+        return $this->driver->getEntity($this->metadata->entityClass, $id);
     }
 
-    public function getList($criteria): array
+    public function getList($criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array
     {
-        throw new \Exception('@TODO: Implement getList() method.');
+        $entityClass = $this->metadata->entityClass;
+        if(!isset($this->driver->storage[$entityClass])) {
+            return [];
+        }
+
+        $result = [];
+        foreach($this->driver->storage[$entityClass] as $k => $entity) {
+            if($this->isMatched($entity, $criteria)) {
+                $result[] = $entity;
+            }
+        }
+
+        return $result;
+    }
+
+    private function isMatched(object $entity, $criteria): bool
+    {
+        return true;
     }
 }

@@ -1,5 +1,6 @@
 {
     "name": "enoffspb/entity-manager",
+    "version": "0.0.1",
     "type": "library",
     "license": "MIT",
     "authors": [

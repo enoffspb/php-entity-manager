@@ -47,7 +47,7 @@ class RepositoryTest extends BaseTest
     public function testGetById()
     {
         $repository = $this->getRepository();
-        $entity = $repository->getByPk(1);
+        $entity = $repository->getById(1);
         $this->assertNotNull($entity);
         $this->assertInstanceOf(Example::class, $entity);
     }

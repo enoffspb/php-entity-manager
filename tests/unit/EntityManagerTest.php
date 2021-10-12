@@ -38,14 +38,14 @@ class EntityManagerTest extends BaseTest
     {
         $repository = $this->getEntityManager()->getRepository(Example::class);
 
-        $entity = $repository->getByPk($newEntityId);
+        $entity = $repository->getById($newEntityId);
         $this->assertInstanceOf(Example::class, $entity);
 
         $this->assertEquals($newEntityId, $entity->id);
 
         $repository->detach($entity);
 
-        $otherInstanceOfEntity = $repository->getByPk($newEntityId);
+        $otherInstanceOfEntity = $repository->getById($newEntityId);
         $this->assertEquals($entity->id, $otherInstanceOfEntity->id);
 
         $this->assertEquals('Test entity', $otherInstanceOfEntity->name);
@@ -68,7 +68,7 @@ class EntityManagerTest extends BaseTest
         $repo = $this->getEntityManager()->getRepository(Example::class);
         $repo->detach($entity);
 
-        $entity = $repo->getByPk($entityId);
+        $entity = $repo->getById($entityId);
         $this->assertEquals($entity->name, 'New name');
 
         return $entity;
@@ -84,7 +84,7 @@ class EntityManagerTest extends BaseTest
         $this->getEntityManager()->delete($entity);
         unset($entity);
 
-        $entity = $this->getEntityManager()->getRepository(Example::class)->getByPk($entityId);
+        $entity = $this->getEntityManager()->getRepository(Example::class)->getById($entityId);
 
         $this->assertNull($entity);
     }

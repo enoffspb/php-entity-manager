@@ -6,8 +6,13 @@ use enoffspb\EntityManager\EntityMetadata;
 use enoffspb\EntityManager\Interfaces\DriverInterface;
 use enoffspb\EntityManager\Repository\InMemoryGenericRepository;
 
+/**
+ * InMemoryDriver is using while a development process of components in action and with auto-testing
+ */
 class InMemoryDriver extends BaseDriver implements DriverInterface
 {
+    public array $storage = [];
+
     public function getGenericRepositoryClass(): string
     {
         return InMemoryGenericRepository::class;
@@ -26,8 +31,6 @@ class InMemoryDriver extends BaseDriver implements DriverInterface
 
         return $metadata;
     }
-
-    private array $storage = [];
 
     public function save(object $entity): bool
     {
