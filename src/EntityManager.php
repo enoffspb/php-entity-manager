@@ -21,7 +21,7 @@ class EntityManager implements EntityManagerInterface
     public function __construct(DriverInterface $driver, array $entitiesConfig = [])
     {
         $this->driver = $driver;
-        $this->entitiesConfig = $entitiesConfig;
+        $this->setEntitiesConfig($entitiesConfig);
     }
 
     public function getDriver(): DriverInterface
@@ -35,6 +35,7 @@ class EntityManager implements EntityManagerInterface
     public function setEntitiesConfig(array $entitiesConfig)
     {
         $this->entitiesConfig = $entitiesConfig;
+        $this->driver->setEntitiesConfig($entitiesConfig);
     }
 
     public function getEntitiesConfig(): array
@@ -42,28 +43,9 @@ class EntityManager implements EntityManagerInterface
         return $this->entitiesConfig;
     }
 
-    private array $repositories = [];
-
     public function getRepository(string $entityClass): RepositoryInterface
     {
-        if(isset($this->repositories[$entityClass])) {
-            return $this->repositories[$entityClass];
-        }
-
-        $metadata = $this->driver->getMetadata($entityClass);
-        $repositoryClass = null;
-
-        if($metadata->repositoryClass !== null) {
-            $repositoryClass = $metadata->repositoryClass;
-        } else {
-            $repositoryClass = $this->driver->getGenericRepositoryClass();
-        }
-
-        $repository = new $repositoryClass($metadata, $this->driver);
-
-        $this->repositories[$entityClass] = $repository;
-
-        return $repository;
+        return $this->getDriver()->getRepository($entityClass);
     }
 
     public function save(object $entity): bool

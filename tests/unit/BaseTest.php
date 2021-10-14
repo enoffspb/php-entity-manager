@@ -9,17 +9,15 @@ use PHPUnit\Framework\TestCase;
 
 abstract class BaseTest extends TestCase
 {
-    protected static EntityManagerInterface $entityManager;
+    protected static EntityManager $entityManager;
 
     protected static function createEntityManager()
     {
         $driver = new InMemoryDriver();
         self::$entityManager = new EntityManager($driver);
-
-        $driver->setEntityManager(self::$entityManager);
     }
 
-    protected function getEntityManager(): EntityManagerInterface
+    protected function getEntityManager(): EntityManager
     {
         return self::$entityManager;
     }

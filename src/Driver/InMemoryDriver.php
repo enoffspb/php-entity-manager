@@ -4,6 +4,7 @@ namespace enoffspb\EntityManager\Driver;
 
 use enoffspb\EntityManager\EntityMetadata;
 use enoffspb\EntityManager\Interfaces\DriverInterface;
+use enoffspb\EntityManager\Interfaces\RepositoryInterface;
 use enoffspb\EntityManager\Repository\InMemoryGenericRepository;
 
 /**
@@ -18,32 +19,17 @@ class InMemoryDriver extends BaseDriver implements DriverInterface
         return InMemoryGenericRepository::class;
     }
 
-    public function createMetadata($entityClass, $entityConfig): EntityMetadata
-    {
-        $metadata = new EntityMetadata();
-        $metadata->entityClass = $entityClass;
-
-        if ($entityConfig) {
-            foreach ($entityConfig as $k => $v) {
-                $metadata->$k = $v;
-            }
-        }
-
-        return $metadata;
-    }
-
     public function save(object $entity): bool
     {
         $entityClass = get_class($entity);
         $metadata = $this->getMetadata($entityClass);
-        $pkField = $metadata->primaryKey;
 
         $nextId = $this->getNextPk($entityClass);
-        $entity->$pkField = $nextId;
+        $metadata->setPkValue($entity, $nextId);
 
         $this->cacheEntity($entity);
 
-        $repository = $this->getEntityManager()->getRepository(get_class($entity));
+        $repository = $this->getRepository(get_class($entity));
         $repository->attach($entity);
 
         return true;
@@ -60,9 +46,8 @@ class InMemoryDriver extends BaseDriver implements DriverInterface
     {
         $entityClass = get_class($entity);
         $metadata = $this->getMetadata($entityClass);
-        $pkField = $metadata->primaryKey;
 
-        $id = $entity->$pkField;
+        $id = $metadata->getPkValue($entity);
 
         if(isset($this->storage[$entityClass]) && isset($this->storage[$entityClass][$id])) {
             unset($this->storage[$entityClass][$id]);
@@ -96,9 +81,9 @@ class InMemoryDriver extends BaseDriver implements DriverInterface
         }
 
         $metadata = $this->getMetadata($entityClass);
-        $pk = $metadata->primaryKey;
+        $id = $metadata->getPkValue($entity);
 
-        $this->storage[$entityClass][$entity->$pk] = $entity;
+        $this->storage[$entityClass][$id] = $entity;
     }
 
     public function getEntity(string $entityClass, $id): ?object

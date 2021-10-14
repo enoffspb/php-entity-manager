@@ -4,42 +4,71 @@ namespace enoffspb\EntityManager\Driver;
 
 use enoffspb\EntityManager\EntityMetadata;
 use enoffspb\EntityManager\Interfaces\DriverInterface;
-use enoffspb\EntityManager\Interfaces\EntityManagerInterface;
 use enoffspb\EntityManager\Interfaces\RepositoryInterface;
 
 abstract class BaseDriver implements DriverInterface
 {
-    private EntityManagerInterface $entityManager;
-    private array $metaDatas = [];
+    private array $metaData = [];
     private array $entitiesConfig = [];
+    private array $repositories = [];
 
-    public function setEntityManager(EntityManagerInterface $entityManager): void
-    {
-        $this->entityManager = $entityManager;
-    }
-
-    public function getEntityManager(): EntityManagerInterface
-    {
-        return $this->entityManager;
-    }
-
-    public function setEntitiesConfig(array $entitiesConfig)
+    public function setEntitiesConfig(array $entitiesConfig): void
     {
         $this->entitiesConfig = $entitiesConfig;
     }
 
+    public function createMetadata($entityClass, $entityConfig): EntityMetadata
+    {
+        $metadata = new EntityMetadata();
+        $metadata->entityClass = $entityClass;
+
+        if ($entityConfig) {
+            foreach ($entityConfig as $k => $v) {
+                if($k === 'mapping') {
+                    $metadata->setMapping($v);
+                } else {
+                    $metadata->$k = $v;
+                }
+            }
+        }
+
+        return $metadata;
+    }
+
     public function getMetadata(string $entityClass): EntityMetadata
     {
-        if(isset($this->metaDatas[$entityClass])) {
-            return $this->metaDatas[$entityClass];
+        if(isset($this->metaData[$entityClass])) {
+            return $this->metaData[$entityClass];
         }
 
         $entityConfig = $this->entitiesConfig[$entityClass] ?? null;
 
         $metadata = $this->createMetadata($entityClass, $entityConfig);
 
-        $this->metaDatas[$entityClass] = $metadata;
+        $this->metaData[$entityClass] = $metadata;
 
         return $metadata;
+    }
+
+    public function getRepository(string $entityClass): RepositoryInterface
+    {
+        if(isset($this->repositories[$entityClass])) {
+            return $this->repositories[$entityClass];
+        }
+
+        $metadata = $this->getMetadata($entityClass);
+        $repositoryClass = null;
+
+        if($metadata->repositoryClass !== null) {
+            $repositoryClass = $metadata->repositoryClass;
+        } else {
+            $repositoryClass = $this->getGenericRepositoryClass();
+        }
+
+        $repository = new $repositoryClass($metadata, $this);
+
+        $this->repositories[$entityClass] = $repository;
+
+        return $repository;
     }
 }

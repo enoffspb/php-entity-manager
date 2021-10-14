@@ -11,6 +11,17 @@ class EntityManagerTest extends BaseTest
     {
         parent::setUpBeforeClass();
         self::createEntityManager();
+
+        $entityManager = self::getEntityManager();
+        $entitiesConfig = [
+            Example::class => [
+                'mapping' => [
+                    'id' => ['getId', 'setId'],
+                    'custom' => ['getCustom', 'setCustom']
+                ]
+            ]
+        ];
+        $entityManager->setEntitiesConfig($entitiesConfig);
     }
 
     public function testGetDriver()
@@ -26,9 +37,9 @@ class EntityManagerTest extends BaseTest
         $res = $this->getEntityManager()->save($entity);
 
         $this->assertTrue($res);
-        $this->assertNotNull($entity->id);
+        $this->assertNotNull($entity->getId());
 
-        return $entity->id;
+        return $entity->getId();
     }
 
     /**

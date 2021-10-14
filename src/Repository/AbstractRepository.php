@@ -20,9 +20,8 @@ abstract class AbstractRepository implements RepositoryInterface
 
     public function attach(object $entity): void
     {
-        $pk = $this->metadata->primaryKey;
-
-        $this->entitiesCache[$entity->$pk] = $entity;
+        $id = $this->metadata->getPkValue($entity);
+        $this->entitiesCache[$id] = $entity;
 
         $this->storeValues($entity);
     }
@@ -43,7 +42,8 @@ abstract class AbstractRepository implements RepositoryInterface
     {
         $columns = $this->metadata->getMapping();
         $pkField = $this->metadata->primaryKey;
-        $pk = $entity->$pkField;
+
+        $pk = $this->metadata->getPkValue($entity);
 
         $values = [];
         foreach($columns as $column) {
