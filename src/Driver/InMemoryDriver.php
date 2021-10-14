@@ -2,9 +2,7 @@
 
 namespace enoffspb\EntityManager\Driver;
 
-use enoffspb\EntityManager\EntityMetadata;
 use enoffspb\EntityManager\Interfaces\DriverInterface;
-use enoffspb\EntityManager\Interfaces\RepositoryInterface;
 use enoffspb\EntityManager\Repository\InMemoryGenericRepository;
 
 /**
