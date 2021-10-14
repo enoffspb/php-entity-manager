@@ -59,6 +59,30 @@ foreach($list as $entity) {
 Configuration
 ------------------------
 
+An entities config:
+```php
+$entitiesConfig = [
+    MyEntity::class => [
+        'primaryKey' => 'id', // by default
+        'tableName' => 'table_name',
+        'repositoryClass' => MyEntityRepository::class,
+        'mapping' => [ // a list of columns
+            'columnName' => [
+                'attribute' => 'attrName',
+                'getter' => 'getterName',
+                'setter' => 'setterName',
+                'type' => Column::TYPE_VARCHAR,
+                'length' => '',
+                'nullable' => '',
+            ],
+            // another columns are here
+        ]
+    ],
+    AnotherEntity::class => [
+        /* An AnotherEntity config is here */ 
+    ]
+];
+```
 
 Tests
 ------------------------

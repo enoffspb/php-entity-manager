@@ -28,10 +28,10 @@ abstract class AbstractRepository implements RepositoryInterface
 
     public function detach(object $entity): void
     {
-        $pk = $this->metadata->primaryKey;
+        $id = $this->metadata->getPkValue($entity);
 
-        if(isset($this->entitiesCache[$entity->$pk])) {
-            unset($this->entitiesCache[$entity->$pk]);
+        if(isset($this->entitiesCache[$id])) {
+            unset($this->entitiesCache[$id]);
         }
 
         $this->clearStoredValues($entity);
@@ -41,36 +41,36 @@ abstract class AbstractRepository implements RepositoryInterface
     public function storeValues(object $entity): void
     {
         $columns = $this->metadata->getMapping();
-        $pkField = $this->metadata->primaryKey;
-
-        $pk = $this->metadata->getPkValue($entity);
+        $id = $this->metadata->getPkValue($entity);
 
         $values = [];
         foreach($columns as $column) {
-            $values[$column->attribute] = $entity->{$column->attribute};
+            if($column->getter !== null) {
+                $values[$column->field] = $entity->{$column->getter}();
+            } else {
+                $values[$column->field] = $entity->{$column->attribute};
+            }
         }
-        $this->storedValues[$pk] = $values;
+        $this->storedValues[$id] = $values;
     }
 
     public function getStoredValues(object $entity): ?array
     {
-        $pkField = $this->metadata->primaryKey;
-        $pk = $entity->$pkField;
+        $id = $this->metadata->getPkValue($entity);
 
-        if(!isset($this->storedValues[$pk])) {
+        if(!isset($this->storedValues[$id])) {
             return null;
         }
 
-        return $this->storedValues[$pk];
+        return $this->storedValues[$id];
     }
 
     public function clearStoredValues(object $entity): void
     {
-        $pkField = $this->metadata->primaryKey;
-        $pk = $entity->$pkField;
+        $id = $this->metadata->getPkValue($entity);
 
-        if(isset($this->storedValues[$pk])) {
-            unset($this->storedValues[$pk]);
+        if(isset($this->storedValues[$id])) {
+            unset($this->storedValues[$id]);
         }
     }
 }

@@ -17,20 +17,10 @@ abstract class BaseDriver implements DriverInterface
         $this->entitiesConfig = $entitiesConfig;
     }
 
-    public function createMetadata($entityClass, $entityConfig): EntityMetadata
+    public function createMetadata(string $entityClass, array $entityConfig): EntityMetadata
     {
-        $metadata = new EntityMetadata();
+        $metadata = new EntityMetadata($entityConfig);
         $metadata->entityClass = $entityClass;
-
-        if ($entityConfig) {
-            foreach ($entityConfig as $k => $v) {
-                if($k === 'mapping') {
-                    $metadata->setMapping($v);
-                } else {
-                    $metadata->$k = $v;
-                }
-            }
-        }
 
         return $metadata;
     }
@@ -43,7 +33,7 @@ abstract class BaseDriver implements DriverInterface
 
         $entityConfig = $this->entitiesConfig[$entityClass] ?? null;
 
-        $metadata = $this->createMetadata($entityClass, $entityConfig);
+        $metadata = $this->createMetadata($entityClass, $entityConfig ?? []);
 
         $this->metaData[$entityClass] = $metadata;
 

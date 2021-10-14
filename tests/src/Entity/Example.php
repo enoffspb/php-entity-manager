@@ -7,7 +7,7 @@ class Example
     private ?int $id = null;
     public ?string $name = null;
 
-    private ?string $private = null;
+    private ?string $custom = null;
 
     public function getId(): ?int
     {
@@ -19,13 +19,13 @@ class Example
         $this->id = $id;
     }
 
-    public function getPrivate(): ?string
+    public function getCustom(): ?string
     {
-        return $this->private;
+        return $this->custom;
     }
 
-    public function setPrivate(?sting $private)
+    public function setCustom(?sting $custom)
     {
-        $this->private = $private;
+        $this->custom = $custom;
     }
 }

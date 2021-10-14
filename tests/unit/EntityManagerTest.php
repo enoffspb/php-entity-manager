@@ -11,17 +11,6 @@ class EntityManagerTest extends BaseTest
     {
         parent::setUpBeforeClass();
         self::createEntityManager();
-
-        $entityManager = self::getEntityManager();
-        $entitiesConfig = [
-            Example::class => [
-                'mapping' => [
-                    'id' => ['getId', 'setId'],
-                    'custom' => ['getCustom', 'setCustom']
-                ]
-            ]
-        ];
-        $entityManager->setEntitiesConfig($entitiesConfig);
     }
 
     public function testGetDriver()
@@ -52,12 +41,12 @@ class EntityManagerTest extends BaseTest
         $entity = $repository->getById($newEntityId);
         $this->assertInstanceOf(Example::class, $entity);
 
-        $this->assertEquals($newEntityId, $entity->id);
+        $this->assertEquals($newEntityId, $entity->getId());
 
         $repository->detach($entity);
 
         $otherInstanceOfEntity = $repository->getById($newEntityId);
-        $this->assertEquals($entity->id, $otherInstanceOfEntity->id);
+        $this->assertEquals($entity->getId(), $otherInstanceOfEntity->getId());
 
         $this->assertEquals('Test entity', $otherInstanceOfEntity->name);
 
@@ -74,7 +63,7 @@ class EntityManagerTest extends BaseTest
         $res = $this->getEntityManager()->update($entity);
         $this->assertTrue($res);
 
-        $entityId = $entity->id;
+        $entityId = $entity->getId();
 
         $repo = $this->getEntityManager()->getRepository(Example::class);
         $repo->detach($entity);
@@ -90,7 +79,7 @@ class EntityManagerTest extends BaseTest
      */
     public function testDeleteEntity(Example $entity)
     {
-        $entityId = $entity->id;
+        $entityId = $entity->getId();
 
         $this->getEntityManager()->delete($entity);
         unset($entity);

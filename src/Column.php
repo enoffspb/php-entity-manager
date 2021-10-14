@@ -9,12 +9,15 @@ class Column
     const TYPE_SMALLINT = 'SMALLINT';
     const TYPE_TINYINT = 'TINYINT';
     const TYPE_VARCHAR = 'VARCHAR';
+    const TYPE_TEXT = 'TEXT';
 
-    public string $name;
+    public string $field;
     public string $type;
-    public string $attribute;
+    public ?string $attribute;
+    public ?string $getter;
+    public ?string $setter;
     public ?int $length;
-    public bool $nullable;
+    public bool $nullable = false;
 
     public function isInteger(): bool
     {

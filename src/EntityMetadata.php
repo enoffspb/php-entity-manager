@@ -11,6 +11,37 @@ class EntityMetadata
 
     private array $mapping = [];
 
+    public function __construct(array $config = [])
+    {
+        foreach($config as $k => $v) {
+            if($k === 'mapping') {
+                continue;
+            }
+
+            $this->$k = $v;
+        }
+
+        $mapping = $config['mapping'] ?? [];
+        foreach($mapping as $fieldName => $columnConfig) {
+            $column = new Column();
+            $column->field = $fieldName;
+            $column->type = $columnConfig['type'] ?? Column::TYPE_TEXT;
+            $column->attribute = $columnConfig['attribute'] ?? null;
+            $column->getter = $columnConfig['getter'] ?? null;
+            $column->setter = $columnConfig['setter'] ?? null;
+            $column->length = $columnConfig['length'] ?? null;
+            if(isset($columnConfig['nullable'])) {
+                $column->nullable = (bool) $columnConfig['nullable'];
+            }
+
+            if($column->attribute === null && ($column->getter === null || $column->setter === null)) {
+                $column->attribute = $fieldName;
+            }
+
+            $this->mapping[$fieldName] = $column;
+        }
+    }
+
     /**
      * @return Column[]
      */
@@ -26,37 +57,35 @@ class EntityMetadata
 
     public function getPkValue(object $entity)
     {
-        $pk = $this->primaryKey;
-        $pkMap = $this->getMapping()[$pk] ?? null;
-
-        $id = null;
-        if($pkMap === null) {
-            $id = $entity->$pk;
-        } else {
-            if(is_array($pkMap)) {
-                $getter = $pkMap[0];
-                $id = $entity->$getter();
-            } else {
-                $id = $entity->$pkMap;
-            }
+        $pkColumn = $this->getMapping()[$this->primaryKey] ?? null;
+        if($pkColumn === null) {
+            throw new \Exception('EntityMetadata has not primaryKey column.');
         }
 
-        return $id;
+        $id = null;
+        if($pkColumn->getter) {
+            $getter = $pkColumn->getter;
+            return $entity->$getter();
+        }
+
+        $attr = $pkColumn->attribute;
+        return $entity->$attr;
     }
 
     public function setPkValue($entity, $idValue): void
     {
-        $pkField = $this->primaryKey;
-        $pkFieldMap = $this->getMapping()[$pkField] ?? null;
-        if($pkFieldMap === null) {
-            $entity->$pkField = $idValue;
+        $pkColumn = $this->getMapping()[$this->primaryKey] ?? null;
+        if($pkColumn === null) {
+            throw new \Exception('EntityMetadata has not primaryKey column.');
+        }
+
+        $id = null;
+        if($pkColumn->setter) {
+            $setter = $pkColumn->setter;
+            $entity->$setter($idValue);
         } else {
-            if(is_array($pkFieldMap)) {
-                $setter = $pkFieldMap[1];
-                $entity->$setter($idValue);
-            } else {
-                $entity->$pkFieldMap = $idValue;
-            }
+            $attr = $pkColumn->attribute;
+            $entity->$attr = $idValue;
         }
     }
 

@@ -7,7 +7,7 @@ use enoffspb\EntityManager\EntityMetadata;
 interface DriverInterface
 {
     public function getMetadata(string $entityClass): EntityMetadata;
-    public function createMetadata($entityClass, $entityConfig): EntityMetadata;
+    public function createMetadata(string $entityClass, array $entityConfig): EntityMetadata;
     public function setEntitiesConfig(array $entitiesConfig): void;
 
     public function save(object $entity): bool;
