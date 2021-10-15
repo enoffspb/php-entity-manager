@@ -3,6 +3,7 @@
 namespace enoffspb\EntityManager\Tests\Unit;
 
 use enoffspb\EntityManager\Interfaces\DriverInterface;
+use enoffspb\EntityManager\Interfaces\RepositoryInterface;
 use enoffspb\EntityManager\Tests\Entity\Example;
 
 class EntityManagerTest extends BaseTest
@@ -29,6 +30,13 @@ class EntityManagerTest extends BaseTest
         $this->assertNotNull($entity->getId());
 
         return $entity->getId();
+    }
+
+    public function testGetRepository()
+    {
+        $repository = $this->getEntityManager()->getRepository(Example::class);
+        $this->assertInstanceOf(RepositoryInterface::class, $repository);
+//        $entity = $repository->getById(1); $entity->
     }
 
     /**

@@ -43,6 +43,11 @@ class EntityManager implements EntityManagerInterface
         return $this->entitiesConfig;
     }
 
+    /**
+     * @template T of object
+     * @param class-string<T> $entityClass
+     * @return RepositoryInterface<T>
+     */
     public function getRepository(string $entityClass): RepositoryInterface
     {
         return $this->getDriver()->getRepository($entityClass);

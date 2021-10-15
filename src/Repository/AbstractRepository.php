@@ -6,10 +6,18 @@ use enoffspb\EntityManager\EntityMetadata;
 use enoffspb\EntityManager\Interfaces\DriverInterface;
 use enoffspb\EntityManager\Interfaces\RepositoryInterface;
 
+/**
+ * @template T of object
+ * @implements RepositoryInterface<T>
+ */
 abstract class AbstractRepository implements RepositoryInterface
 {
     protected EntityMetadata $metadata;
     protected DriverInterface $driver;
+
+    /**
+     * @var T[]
+     */
     protected array $entitiesCache = [];
 
     public function __construct(EntityMetadata $metadata, DriverInterface $driver)
@@ -18,6 +26,9 @@ abstract class AbstractRepository implements RepositoryInterface
         $this->driver = $driver;
     }
 
+    /**
+     * @param T $entity
+     */
     public function attach(object $entity): void
     {
         $id = $this->metadata->getPkValue($entity);
@@ -26,6 +37,9 @@ abstract class AbstractRepository implements RepositoryInterface
         $this->storeValues($entity);
     }
 
+    /**
+     * @param T $entity
+     */
     public function detach(object $entity): void
     {
         $id = $this->metadata->getPkValue($entity);
@@ -38,6 +52,10 @@ abstract class AbstractRepository implements RepositoryInterface
     }
 
     private array $storedValues = [];
+
+    /**
+     * @param T $entity
+     */
     public function storeValues(object $entity): void
     {
         $columns = $this->metadata->getMapping();
@@ -54,6 +72,9 @@ abstract class AbstractRepository implements RepositoryInterface
         $this->storedValues[$id] = $values;
     }
 
+    /**
+     * @param T $entity
+     */
     public function getStoredValues(object $entity): ?array
     {
         $id = $this->metadata->getPkValue($entity);
@@ -65,6 +86,9 @@ abstract class AbstractRepository implements RepositoryInterface
         return $this->storedValues[$id];
     }
 
+    /**
+     * @param T $entity
+     */
     public function clearStoredValues(object $entity): void
     {
         $id = $this->metadata->getPkValue($entity);

@@ -15,5 +15,11 @@ interface DriverInterface
     public function delete(object $entity): bool;
 
     public function getGenericRepositoryClass(): string;
+
+    /**
+     * @template T of object
+     * @param class-string<T> $entityClass
+     * @return RepositoryInterface<T>
+     */
     public function getRepository(string $entityClass): RepositoryInterface;
 }

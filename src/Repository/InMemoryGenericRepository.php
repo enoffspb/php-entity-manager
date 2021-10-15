@@ -6,16 +6,33 @@ use enoffspb\EntityManager\Driver\InMemoryDriver;
 use enoffspb\EntityManager\Interfaces\RepositoryInterface;
 
 /**
+ * @template T of object
+ * @implements RepositoryInterface<T>
+ *
  * @property InMemoryDriver $driver
  */
 class InMemoryGenericRepository extends AbstractRepository implements RepositoryInterface
 {
+    /**
+     * @return T|null
+     */
     public function getById($id): ?object
     {
-        return $this->driver->getEntity($this->metadata->entityClass, $id);
+        /**
+         * @var T|null $entity
+         */
+        $entity = $this->driver->getEntity($this->metadata->entityClass, $id);
+        return $entity;
     }
 
-    public function getList($criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array
+    /**
+     * @param array $criteria
+     * @param array|null $orderBy
+     * @param int|null $limit
+     * @param int|null $offset
+     * @return T[]
+     */
+    public function getList(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array
     {
         $entityClass = $this->metadata->entityClass;
         if(!isset($this->driver->storage[$entityClass])) {

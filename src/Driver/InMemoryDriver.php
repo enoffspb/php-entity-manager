@@ -84,6 +84,12 @@ class InMemoryDriver extends BaseDriver implements DriverInterface
         $this->storage[$entityClass][$id] = $entity;
     }
 
+    /**
+     * @template T of object
+     * @param class-string<T> $entityClass
+     * @param mixed $id
+     * @return T|null
+     */
     public function getEntity(string $entityClass, $id): ?object
     {
         if(!isset($this->storage[$entityClass]) || !isset($this->storage[$entityClass][$id])) {
