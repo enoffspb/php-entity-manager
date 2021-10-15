@@ -12,26 +12,27 @@ abstract class BaseTest extends TestCase
 {
     protected static EntityManager $entityManager;
 
+    protected static array $entitiesConfig = [
+        Example::class => [
+            'mapping' => [
+                'id' => [
+                    'getter' => 'getId',
+                    'setter' => 'setId'
+                ],
+                'name' => [],
+                'custom' => [
+                    'getter' => 'getCustom',
+                    'setter' => 'setCustom'
+                ]
+            ]
+        ]
+    ];
+
     protected static function createEntityManager()
     {
         $driver = new InMemoryDriver();
 
-        $entitiesConfig = [
-            Example::class => [
-                'mapping' => [
-                    'id' => [
-                        'getter' => 'getId',
-                        'setter' => 'setId'
-                    ],
-                    'custom' => [
-                        'getter' => 'getCustom',
-                        'setter' => 'setCustom'
-                    ]
-                ]
-            ]
-        ];
-
-        self::$entityManager = new EntityManager($driver, $entitiesConfig);
+        self::$entityManager = new EntityManager($driver, self::$entitiesConfig);
     }
 
     protected function getEntityManager(): EntityManager

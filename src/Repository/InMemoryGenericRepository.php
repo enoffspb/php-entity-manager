@@ -34,6 +34,13 @@ class InMemoryGenericRepository extends AbstractRepository implements Repository
 
     private function isMatched(object $entity, $criteria): bool
     {
-        return true;
+        $matched = true;
+
+        foreach($criteria as $field => $filterValue) {
+            $value = $this->metadata->getFieldValue($entity, $field);
+            $matched = $matched && ($value === $filterValue);
+        }
+
+        return $matched;
     }
 }

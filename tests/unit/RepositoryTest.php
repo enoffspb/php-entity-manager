@@ -2,32 +2,28 @@
 
 namespace enoffspb\EntityManager\Tests\Unit;
 
-use enoffspb\EntityManager\Driver\InMemoryDriver;
-use enoffspb\EntityManager\EntityManager;
-use enoffspb\EntityManager\Interfaces\EntityManagerInterface;
 use enoffspb\EntityManager\Interfaces\RepositoryInterface;
 use enoffspb\EntityManager\Repository\InMemoryGenericRepository;
 use enoffspb\EntityManager\Tests\Entity\Example;
-use PHPStan\Testing\TestCase;
 
 class RepositoryTest extends BaseTest
 {
     private static ?RepositoryInterface $repository = null;
+
+    private static array $entitiesData = [
+        ['name' => '1st entity'],
+        ['name' => '2nd entity'],
+        ['name' => '3rd entity'],
+    ];
 
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
         self::createEntityManager();
 
-        $data = [
-            ['name' => '1st entity'],
-            ['name' => '2nd entity'],
-            ['name' => '3rd entity'],
-        ];
-
-        foreach($data as $entityData) {
+        foreach(self::$entitiesData as $entityData) {
             $entity = new Example();
-            foreach($data as $k => $v) {
+            foreach($entityData as $k => $v) {
                 $entity->$k = $v;
             }
             self::$entityManager->save($entity);
@@ -37,7 +33,7 @@ class RepositoryTest extends BaseTest
     private function getRepository(): RepositoryInterface
     {
         if(self::$repository === null) {
-            $metadata = $this->getEntityManager()->getDriver()->createMetadata(Example::class, []);
+            $metadata = $this->getEntityManager()->getDriver()->createMetadata(Example::class, self::$entitiesConfig[Example::class]);
             self::$repository = new InMemoryGenericRepository($metadata, $this->getEntityManager()->getDriver());
         }
 
@@ -56,10 +52,19 @@ class RepositoryTest extends BaseTest
     {
         $repository = $this->getRepository();
 
+        $allEntities = $repository->getList([/* empty criteria */]);
+        $this->assertCount(count(self::$entitiesData), $allEntities);
+
         $entities = $repository->getList([
-            /** empty criteria */
+            'name' => '1st entity'
         ]);
 
-        $this->assertNotEmpty($entities);
+        $this->assertCount(1, $entities);
+
+        /**
+         * @var Example $entity
+         */
+        $entity = $entities[0];
+        $this->assertEquals('1st entity', $entity->name);
     }
 }

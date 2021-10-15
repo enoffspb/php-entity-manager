@@ -8,9 +8,9 @@ use enoffspb\EntityManager\Interfaces\RepositoryInterface;
 
 abstract class BaseDriver implements DriverInterface
 {
-    private array $metaData = [];
-    private array $entitiesConfig = [];
-    private array $repositories = [];
+    protected array $metaData = [];
+    protected array $entitiesConfig = [];
+    protected array $repositories = [];
 
     public function setEntitiesConfig(array $entitiesConfig): void
     {
