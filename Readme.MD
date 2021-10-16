@@ -1,11 +1,16 @@
-EntityManager lib
+Entity Manager
 ==============
-EntityManager is used to as a simple, independent data-persist layer for working with
+```
+! WORK IN PROGRESS !
+```
+EntityManager is a PHP library is used to as a simple, independent data-persist layer for working with
 tiny entities without its associations to the persistence layer. 
 It is useful for OOAD and allows to distinguish a problem domain from a technical one.
 
 A public interface for using EntityManager:
 ```php
+namespace EnoffSpb\EntityManager\Interfaces;
+
 interface EntityManagerInterface
 {
     public function save(object $entity): bool;
@@ -24,7 +29,7 @@ interface RepositoryInterface
 }
 ```
 
-Example:
+An overview of usage:
 ```php
 $entityManager = new EntityManager(/** pass the params */);
 /** Configure $entityManager as described later */
