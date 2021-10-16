@@ -15,13 +15,13 @@
     ],
     "autoload": {
         "psr-4": {
-            "enoffspb\\EntityManager\\": "src/"
+            "EnoffSpb\\EntityManager\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "enoffspb\\EntityManager\\Tests\\Unit\\": "tests/unit",
-            "enoffspb\\EntityManager\\Tests\\": "tests/src"
+            "EnoffSpb\\EntityManager\\Tests\\Unit\\": "tests/unit",
+            "EnoffSpb\\EntityManager\\Tests\\": "tests/src"
         }
     },
     "require-dev": {

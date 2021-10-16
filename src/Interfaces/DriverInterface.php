@@ -1,8 +1,8 @@
 <?php
 
-namespace enoffspb\EntityManager\Interfaces;
+namespace EnoffSpb\EntityManager\Interfaces;
 
-use enoffspb\EntityManager\EntityMetadata;
+use EnoffSpb\EntityManager\EntityMetadata;
 
 interface DriverInterface
 {

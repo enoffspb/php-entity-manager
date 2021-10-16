@@ -1,10 +1,10 @@
 <?php
 
-namespace enoffspb\EntityManager\Repository;
+namespace EnoffSpb\EntityManager\Repository;
 
-use enoffspb\EntityManager\EntityMetadata;
-use enoffspb\EntityManager\Interfaces\DriverInterface;
-use enoffspb\EntityManager\Interfaces\RepositoryInterface;
+use EnoffSpb\EntityManager\EntityMetadata;
+use EnoffSpb\EntityManager\Interfaces\DriverInterface;
+use EnoffSpb\EntityManager\Interfaces\RepositoryInterface;
 
 /**
  * @template T of object

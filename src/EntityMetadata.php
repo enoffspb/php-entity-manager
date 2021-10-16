@@ -1,6 +1,6 @@
 <?php
 
-namespace enoffspb\EntityManager;
+namespace EnoffSpb\EntityManager;
 
 class EntityMetadata
 {

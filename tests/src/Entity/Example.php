@@ -1,6 +1,6 @@
 <?php
 
-namespace enoffspb\EntityManager\Tests\Entity;
+namespace EnoffSpb\EntityManager\Tests\Entity;
 
 class Example
 {

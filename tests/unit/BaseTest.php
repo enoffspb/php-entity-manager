@@ -1,11 +1,11 @@
 <?php
 
-namespace enoffspb\EntityManager\Tests\Unit;
+namespace EnoffSpb\EntityManager\Tests\Unit;
 
-use enoffspb\EntityManager\Driver\InMemoryDriver;
-use enoffspb\EntityManager\EntityManager;
-use enoffspb\EntityManager\Interfaces\EntityManagerInterface;
-use enoffspb\EntityManager\Tests\Entity\Example;
+use EnoffSpb\EntityManager\Driver\InMemoryDriver;
+use EnoffSpb\EntityManager\EntityManager;
+use EnoffSpb\EntityManager\Interfaces\EntityManagerInterface;
+use EnoffSpb\EntityManager\Tests\Entity\Example;
 use PHPUnit\Framework\TestCase;
 
 abstract class BaseTest extends TestCase

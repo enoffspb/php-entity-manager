@@ -1,9 +1,9 @@
 <?php
 
-namespace enoffspb\EntityManager\Driver;
+namespace EnoffSpb\EntityManager\Driver;
 
-use enoffspb\EntityManager\Interfaces\DriverInterface;
-use enoffspb\EntityManager\Repository\InMemoryGenericRepository;
+use EnoffSpb\EntityManager\Interfaces\DriverInterface;
+use EnoffSpb\EntityManager\Repository\InMemoryGenericRepository;
 
 /**
  * InMemoryDriver is using while a development process of components in action and with auto-testing

@@ -1,10 +1,10 @@
 <?php
 
-namespace enoffspb\EntityManager\Driver;
+namespace EnoffSpb\EntityManager\Driver;
 
-use enoffspb\EntityManager\EntityMetadata;
-use enoffspb\EntityManager\Interfaces\DriverInterface;
-use enoffspb\EntityManager\Interfaces\RepositoryInterface;
+use EnoffSpb\EntityManager\EntityMetadata;
+use EnoffSpb\EntityManager\Interfaces\DriverInterface;
+use EnoffSpb\EntityManager\Interfaces\RepositoryInterface;
 
 abstract class BaseDriver implements DriverInterface
 {

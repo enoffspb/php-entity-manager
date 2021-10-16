@@ -1,11 +1,11 @@
 <?php
 
-namespace enoffspb\EntityManager;
+namespace EnoffSpb\EntityManager;
 
-use enoffspb\EntityManager\Interfaces\DriverInterface;
-use enoffspb\EntityManager\Interfaces\EntityManagerInterface;
-use enoffspb\EntityManager\Interfaces\RepositoryInterface;
-use enoffspb\EntityManager\Repository\GenericRepository;
+use EnoffSpb\EntityManager\Interfaces\DriverInterface;
+use EnoffSpb\EntityManager\Interfaces\EntityManagerInterface;
+use EnoffSpb\EntityManager\Interfaces\RepositoryInterface;
+use EnoffSpb\EntityManager\Repository\GenericRepository;
 
 class EntityManager implements EntityManagerInterface
 {

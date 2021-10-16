@@ -1,10 +1,10 @@
 <?php
 
-namespace enoffspb\EntityManager\Tests\Unit;
+namespace EnoffSpb\EntityManager\Tests\Unit;
 
-use enoffspb\EntityManager\Interfaces\RepositoryInterface;
-use enoffspb\EntityManager\Repository\InMemoryGenericRepository;
-use enoffspb\EntityManager\Tests\Entity\Example;
+use EnoffSpb\EntityManager\Interfaces\RepositoryInterface;
+use EnoffSpb\EntityManager\Repository\InMemoryGenericRepository;
+use EnoffSpb\EntityManager\Tests\Entity\Example;
 
 class RepositoryTest extends BaseTest
 {

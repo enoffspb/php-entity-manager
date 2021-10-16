@@ -1,6 +1,6 @@
 <?php
 
-namespace enoffspb\EntityManager\Interfaces;
+namespace EnoffSpb\EntityManager\Interfaces;
 
 /**
  * @template T of object

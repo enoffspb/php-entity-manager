@@ -1,10 +1,10 @@
 <?php
 
-namespace enoffspb\EntityManager\Tests\Unit;
+namespace EnoffSpb\EntityManager\Tests\Unit;
 
-use enoffspb\EntityManager\Interfaces\DriverInterface;
-use enoffspb\EntityManager\Interfaces\RepositoryInterface;
-use enoffspb\EntityManager\Tests\Entity\Example;
+use EnoffSpb\EntityManager\Interfaces\DriverInterface;
+use EnoffSpb\EntityManager\Interfaces\RepositoryInterface;
+use EnoffSpb\EntityManager\Tests\Entity\Example;
 
 class EntityManagerTest extends BaseTest
 {
