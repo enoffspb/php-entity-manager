@@ -3,7 +3,7 @@
 namespace EnoffSpb\EntityManager\Tests\Unit;
 
 use EnoffSpb\EntityManager\Interfaces\RepositoryInterface;
-use EnoffSpb\EntityManager\Repository\InMemoryGenericRepository;
+use EnoffSpb\EntityManager\Driver\InMemory\InMemoryGenericRepository;
 use EnoffSpb\EntityManager\Tests\Entity\Example;
 
 class RepositoryTest extends BaseTest

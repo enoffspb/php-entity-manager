@@ -1,9 +1,9 @@
 <?php
 
-namespace EnoffSpb\EntityManager\Repository;
+namespace EnoffSpb\EntityManager\Driver\InMemory;
 
-use EnoffSpb\EntityManager\Driver\InMemoryDriver;
 use EnoffSpb\EntityManager\Interfaces\RepositoryInterface;
+use EnoffSpb\EntityManager\Repository\AbstractRepository;
 
 /**
  * @template T of object

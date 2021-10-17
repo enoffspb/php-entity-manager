@@ -2,7 +2,7 @@
 
 namespace EnoffSpb\EntityManager\Tests\Unit;
 
-use EnoffSpb\EntityManager\Driver\InMemoryDriver;
+use EnoffSpb\EntityManager\Driver\InMemory\InMemoryDriver;
 use EnoffSpb\EntityManager\EntityManager;
 use EnoffSpb\EntityManager\Interfaces\EntityManagerInterface;
 use EnoffSpb\EntityManager\Tests\Entity\Example;
