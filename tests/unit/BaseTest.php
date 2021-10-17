@@ -18,25 +18,16 @@ abstract class BaseTest extends TestCase
     protected static ?string $user = null;
     protected static ?string $password = null;
 
-    protected static array $entitiesConfig = [
-        Example::class => [
-            'tableName' => 'example',
-            'mapping' => [
-                'id' => [
-                    'getter' => 'getId',
-                    'setter' => 'setId'
-                ],
-                'name' => [],
-                'custom' => [
-                    'getter' => 'getCustom',
-                    'setter' => 'setCustom'
-                ]
-            ]
-        ]
-    ];
+    protected static array $entitiesConfig = [];
 
     public static function setUpBeforeClass(): void
     {
+        // Load entities config from tests/data/entitiesConfig.php
+
+        self::$entitiesConfig = require(__DIR__) . '/../data/entitiesConfig.php';
+
+        // Load options from cmd and environment variables
+
         global $argv;
 
         $driverOptKey = array_search('--driver', $argv);
