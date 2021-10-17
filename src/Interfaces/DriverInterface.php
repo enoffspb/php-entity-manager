@@ -6,6 +6,8 @@ use EnoffSpb\EntityManager\EntityMetadata;
 
 interface DriverInterface
 {
+    public function __construct(?string $dsn = null, ?string $user = null, ?string $password = null, array $options = []);
+
     public function getMetadata(string $entityClass): EntityMetadata;
     public function createMetadata(string $entityClass, array $entityConfig): EntityMetadata;
     public function setEntitiesConfig(array $entitiesConfig): void;

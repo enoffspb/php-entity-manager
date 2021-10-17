@@ -114,12 +114,27 @@ class EntityMetadata
         return $entity->$attr;
     }
 
-//    public function createColumnsFromDescribe(array $describeRows)
-//    {
-//        foreach($describeRows as $row) {
-//            $column = new Column();
-//            $column->loadFromDescribe($row);
-//            $this->mapping[$column->name] = $column;
-//        }
-//    }
+    public function getValues(object $entity): array
+    {
+        $columns = $this->getMapping();
+
+        $fields = [];
+        $attribute = null;
+        $value = null;
+
+        foreach($columns as $column) {
+            $getter = $column->getter;
+
+            if($getter !== null) {
+                $value = $entity->$getter();
+            } else {
+                $attribute = $column->attribute;
+                $value = $entity->$attribute;
+            }
+
+            $fields[$column->field] = $value;
+        }
+
+        return $fields;
+    }
 }

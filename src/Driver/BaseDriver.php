@@ -12,6 +12,11 @@ abstract class BaseDriver implements DriverInterface
     protected array $entitiesConfig = [];
     protected array $repositories = [];
 
+    public function __construct(?string $dsn = null, ?string $user = null, ?string $password = null, array $options = [])
+    {
+        // ...
+    }
+
     public function setEntitiesConfig(array $entitiesConfig): void
     {
         $this->entitiesConfig = $entitiesConfig;
