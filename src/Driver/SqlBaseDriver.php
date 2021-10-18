@@ -3,6 +3,7 @@
 namespace EnoffSpb\EntityManager\Driver;
 
 use EnoffSpb\EntityManager\Interfaces\DriverInterface;
+use EnoffSpb\EntityManager\Repository\AbstractRepository;
 use EnoffSpb\EntityManager\Repository\SqlGenericRepository;
 
 use PDO;
@@ -80,7 +81,65 @@ class SqlBaseDriver extends BaseDriver implements DriverInterface
 
     public function update(object $entity): void
     {
-        throw new \Exception('@TODO: Implement ' . __METHOD__ . ' method.');
+        $metadata = $this->getMetadata(get_class($entity));
+
+        $id = $metadata->getPkValue($entity);
+        if($id === null) {
+            throw new \Exception('An entity for update ' . get_class($entity) . ' has not set primaryKey value.');
+        }
+
+        /**
+         * @var $repository AbstractRepository
+         */
+        $repository = $this->getRepository(get_class($entity));
+
+        $currentValues = $metadata->getValues($entity);
+        $storedValues = $repository->getStoredValues($entity);
+
+        $diffValues = null;
+        // If the repository has not stored values for $entity, update the all of fields.
+        if($storedValues === null) {
+            $diffValues = $currentValues;
+        } else {
+            $diffValues = array_diff_assoc($currentValues, $storedValues);
+        }
+        if(empty($diffValues)) {
+            // nothing to update
+            return;
+        }
+
+        $q = $this->identifierQuote;
+
+        $setExpressions = [];
+        $params = [];
+        foreach($diffValues as $columnName => $columnValue) {
+            $columnName = $q. $columnName . $q;
+            $setExpressions[] = "$columnName = ?";
+            $params[] = $columnValue;
+        }
+
+        $tableName = $q . $metadata->tableName . $q;
+        $pkFieldName = $q . $metadata->getMapping()[$metadata->primaryKey]->field . $q;
+
+        $query = "UPDATE $tableName SET " . implode(', ', $setExpressions) .
+            " WHERE $pkFieldName = ?";
+
+        $stmt = $this->getPdo()->prepare($query);
+        if($stmt === false) {
+            /**
+             * @todo Create and use SqlException and pass pdo->errorInfo() to it
+             */
+            throw new \Exception('Cannot prepare a statement for an update query.');
+        }
+
+        $params[] = $id;
+        $res = $stmt->execute($params);
+        if($res === false) {
+            $errInfo = $this->getPdo()->errorInfo();
+            throw new \Exception('Execution an update query returns false. SQLSTATE error code: ' . $errInfo[0] . '; error code: ' . $errInfo[1] . '; message: ' . $errInfo[2]);
+        }
+
+        $repository->storeValues($entity);
     }
 
     public function delete(object $entity): void
