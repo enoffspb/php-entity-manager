@@ -2,7 +2,7 @@
 
 namespace EnoffSpb\EntityManager\Repository;
 
-use EnoffSpb\EntityManager\Driver\SqlAbstractDriver;
+use EnoffSpb\EntityManager\Driver\SqlBaseDriver;
 use EnoffSpb\EntityManager\Interfaces\RepositoryInterface;
 
 use PDO;
@@ -11,7 +11,7 @@ use PDOStatement;
 /**
  * @template T of object
  *
- * @property SqlAbstractDriver $driver
+ * @property SqlBaseDriver $driver
  */
 class SqlGenericRepository extends AbstractRepository implements RepositoryInterface
 {
@@ -50,7 +50,7 @@ class SqlGenericRepository extends AbstractRepository implements RepositoryInter
         if($data === false) {
             return null;
         }
-        
+
         // An issue: we cannot pass params to an entity constructor.
         // @todo Move creation of an entity to a separate method, further it allows to overload a creation process.
 

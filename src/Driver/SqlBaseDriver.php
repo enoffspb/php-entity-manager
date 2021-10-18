@@ -8,7 +8,7 @@ use EnoffSpb\EntityManager\Repository\SqlGenericRepository;
 use PDO;
 use PDOStatement;
 
-abstract class SqlAbstractDriver extends BaseDriver implements DriverInterface
+class SqlBaseDriver extends BaseDriver implements DriverInterface
 {
     public string $identifierQuote = '"';
     public string $valueQuote = "'";

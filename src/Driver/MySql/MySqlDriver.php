@@ -2,10 +2,10 @@
 
 namespace EnoffSpb\EntityManager\Driver\MySql;
 
-use EnoffSpb\EntityManager\Driver\SqlAbstractDriver;
+use EnoffSpb\EntityManager\Driver\SqlBaseDriver;
 use EnoffSpb\EntityManager\Interfaces\DriverInterface;
 
-class MySqlDriver extends SqlAbstractDriver implements DriverInterface
+class MySqlDriver extends SqlBaseDriver implements DriverInterface
 {
     public string $identifierQuote = '`';
     public string $valueQuote = "'";
