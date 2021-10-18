@@ -2,6 +2,7 @@
 
 namespace EnoffSpb\EntityManager\Driver;
 
+use EnoffSpb\EntityManager\Driver\MySql\MySqlGenericRepository;
 use EnoffSpb\EntityManager\Interfaces\DriverInterface;
 
 abstract class SqlAbstractDriver extends BaseDriver implements DriverInterface
@@ -20,6 +21,11 @@ abstract class SqlAbstractDriver extends BaseDriver implements DriverInterface
         }
 
         $this->pdo = new \PDO($dsn, $user, $password);
+    }
+
+    public function getGenericRepositoryClass(): string
+    {
+        return MySqlGenericRepository::class;
     }
 
     public function save(object $entity): bool
@@ -69,6 +75,8 @@ abstract class SqlAbstractDriver extends BaseDriver implements DriverInterface
 
         $repository = $this->getRepository(get_class($entity));
         $repository->attach($entity);
+
+        return true;
     }
 
     public function update(object $entity): bool
@@ -79,10 +87,5 @@ abstract class SqlAbstractDriver extends BaseDriver implements DriverInterface
     public function delete(object $entity): bool
     {
         // TODO: Implement delete() method.
-    }
-
-    public function getGenericRepositoryClass(): string
-    {
-        // TODO: Implement getGenericRepositoryClass() method.
     }
 }
