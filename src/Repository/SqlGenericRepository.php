@@ -53,6 +53,7 @@ class SqlGenericRepository extends AbstractRepository implements RepositoryInter
 
         // An issue: we cannot pass params to an entity constructor.
         // @todo Move creation of an entity to a separate method, further it allows to overload a creation process.
+        // @todo Do it for getList() also.
 
         $entity = new $this->metadata->entityClass();
         $this->metadata->setValues($entity, $data);
@@ -67,6 +68,58 @@ class SqlGenericRepository extends AbstractRepository implements RepositoryInter
      */
     public function getList(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array
     {
-        throw new \Exception('@TODO: Implement ' . __METHOD__ . ' method.');
+        // @todo build a select query
+
+        $q = $this->driver->identifierQuote;
+        $tableName = $q . $this->metadata->tableName . $q;
+
+        $query = "SELECT $tableName.* FROM $tableName";
+
+        $whereExpressions = [];
+        $params = [];
+        foreach($criteria as $field => $value) {
+            $whereExpressions[] = $q . $field . $q . '=?';
+            $params[] = $value;
+        }
+
+        if(!empty($whereExpressions)) {
+            $query .= ' WHERE ' . implode(' AND ', $whereExpressions);
+        }
+
+        if($limit !== null) {
+            $query .= ' LIMIT ' . $limit;
+            if($offset) {
+                $query .= ',' . $offset;
+            }
+        }
+
+        $pdo = $this->driver->getPdo();
+        $stmt = $pdo->prepare($query);
+        if($stmt === false) {
+            $errInfo = $pdo->errorInfo();
+            throw new \Exception('Cannot prepare a statement for a select query. SQLSTATE error code: ' . $errInfo[0] . '; error code: ' . $errInfo[1] . '; message: ' . $errInfo[2]);
+        }
+
+        $res = $stmt->execute($params);
+        if($res === false) {
+            $errInfo = $pdo->errorInfo();
+            throw new \Exception('Cannot execute a SQL query. SQLSTATE error code: ' . $errInfo[0] . '; error code: ' . $errInfo[1] . '; message: ' . $errInfo[2]);
+        }
+
+        /**
+         * @todo Implement a merge strategy. If an entity has already attached - what do we need to do?
+         * @todo Should we update fields of an exists entity? It seems as only one possible case.
+         */
+        $result = [];
+        while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $entity = new $this->metadata->entityClass;
+            $this->metadata->setValues($entity, $row);
+
+            $this->attach($entity);
+
+            $result[] = $entity;
+        }
+
+        return $result;
     }
 }
