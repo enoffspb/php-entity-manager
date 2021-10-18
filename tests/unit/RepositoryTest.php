@@ -44,21 +44,6 @@ class RepositoryTest extends BaseTest
         return self::$repository;
     }
 
-    public function testGetById()
-    {
-        $repository = $this->getRepository();
-        $entity = $repository->getById(1);
-        $this->assertNotNull($entity);
-        $this->assertInstanceOf(Example::class, $entity);
-    }
-
-    public function testGetNonExistsEntity()
-    {
-        $repository = $this->getRepository();
-        $entity = $repository->getById(-1);
-        $this->assertNull($entity);
-    }
-
     public function testGetList()
     {
         $repository = $this->getRepository();
@@ -74,5 +59,27 @@ class RepositoryTest extends BaseTest
          */
         $entity = $entities[0];
         $this->assertEquals('1st entity', $entity->name);
+
+        $repository->detach($entity);
+
+        return $entity->getId();
+    }
+
+    /**
+     * @depends testGetList
+     */
+    public function testGetById(int $id)
+    {
+        $repository = $this->getRepository();
+        $entity = $repository->getById($id);
+        $this->assertNotNull($entity);
+        $this->assertInstanceOf(Example::class, $entity);
+    }
+
+    public function testGetNonExistsEntity()
+    {
+        $repository = $this->getRepository();
+        $entity = $repository->getById(-1);
+        $this->assertNull($entity);
     }
 }
