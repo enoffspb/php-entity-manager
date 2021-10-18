@@ -46,6 +46,9 @@ class SqlBaseDriver extends BaseDriver implements DriverInterface
         $queryValues = [];
         $placeholders = [];
         foreach($fields as $columnName => $columnValue) {
+            if($columnName === $metadata->primaryKey && $columnValue === null) {
+                continue;
+            }
             $queryColumns[] = $this->identifierQuote . $columnName . $this->identifierQuote;
             $queryValues[] = $columnValue;
             $placeholders[] = '?';
