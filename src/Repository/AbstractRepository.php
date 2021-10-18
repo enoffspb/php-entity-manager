@@ -58,17 +58,9 @@ abstract class AbstractRepository implements RepositoryInterface
      */
     public function storeValues(object $entity): void
     {
-        $columns = $this->metadata->getMapping();
         $id = $this->metadata->getPkValue($entity);
+        $values = $this->metadata->getValues($entity);
 
-        $values = [];
-        foreach($columns as $column) {
-            if($column->getter !== null) {
-                $values[$column->field] = $entity->{$column->getter}();
-            } else {
-                $values[$column->field] = $entity->{$column->attribute};
-            }
-        }
         $this->storedValues[$id] = $values;
     }
 
