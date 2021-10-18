@@ -11,6 +11,8 @@ abstract class SqlAbstractDriver extends BaseDriver implements DriverInterface
 
     protected \PDO $pdo;
 
+    private ?\PDOStatement $insertStmt = null;
+
     public function __construct(?string $dsn = null, ?string $user = null, ?string $password = null, array $options = [])
     {
         if($dsn === null) {
@@ -26,43 +28,43 @@ abstract class SqlAbstractDriver extends BaseDriver implements DriverInterface
 
         $fields = $metadata->getValues($entity);
 
-        $columns = $metadata->getMapping();
-
-        $fields = [];
-        $attribute = null;
-        foreach($columns as $column) {
-            $attribute = $column->attribute;
-
-            if(isset($entity->$attribute)) {
-                $fields[$column->field] = $entity->$attribute;
-            }
-        }
-
-        $pk = $metadata->primaryKey;
-
-        $tableName = $this->identifierQuote . $metadata->tableName . $this->identifierQuote;
-
         $queryColumns = [];
         $queryValues = [];
+        $placeholders = [];
         foreach($fields as $columnName => $columnValue) {
             $queryColumns[] = $this->identifierQuote . $columnName . $this->identifierQuote;
-//            $queryValues[] =
+            $queryValues[] = $columnValue;
+            $placeholders[] = '?';
         }
 
-        // @TODO build a query
-        $sql = "INSERT INTO $tableName (" . implode(', ', $queryColumns) . ") VALUES ()";
+        if($this->insertStmt === null) {
+            $tableName = $this->identifierQuote . $metadata->tableName . $this->identifierQuote;
+            $query = "INSERT INTO $tableName (" . implode(', ', $queryColumns) . ") VALUES (" .
+                implode(', ', $placeholders) .
+            ")";
+            $this->insertStmt = $this->pdo->prepare($query);
+        }
+
+        $r = $this->insertStmt->execute($queryValues);
+        if(!$r) {
+            $errInfo = $this->insertStmt->errorInfo();
+            /**
+             * @todo create a class for Exception that will contain an additional info
+             * class SqlException
+             * + query
+             * + params
+             */
+            throw new \Exception('Execution an insert query returns false. SQLSTATE error code: ' . $errInfo[0] . '; error code: ' . $errInfo[1] . '; message: ' . $errInfo[2]);
+        }
 
         // @TODO execute the query
 
-        throw new \Exception('@TODO WIP: implement ' . __METHOD__);
-
-        $insertedId = null; // @TODO get inserted id
-        if(!$insertedId) {
-            return false;
-        }
-
-        if(!isset($entity->$pk)) {
-            $entity->$pk = $insertedId;
+        if($metadata->getPkValue($entity) === null) {
+            $insertedId = $this->pdo->lastInsertId();
+            if(!$insertedId) {
+                throw new \Exception('Cannot retrieve a value from PDO->lastInsertId()');
+            }
+            $metadata->setPkValue($entity, $insertedId);
         }
 
         $repository = $this->getRepository(get_class($entity));
