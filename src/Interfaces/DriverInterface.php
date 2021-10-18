@@ -12,9 +12,9 @@ interface DriverInterface
     public function createMetadata(string $entityClass, array $entityConfig): EntityMetadata;
     public function setEntitiesConfig(array $entitiesConfig): void;
 
-    public function save(object $entity): bool;
-    public function update(object $entity): bool;
-    public function delete(object $entity): bool;
+    public function save(object $entity): void;
+    public function update(object $entity): void;
+    public function delete(object $entity): void;
 
     public function getGenericRepositoryClass(): string;
 

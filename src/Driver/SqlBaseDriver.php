@@ -13,7 +13,7 @@ class SqlBaseDriver extends BaseDriver implements DriverInterface
     public string $identifierQuote = '"';
     public string $valueQuote = "'";
 
-    protected PDO $pdo;
+    private PDO $pdo;
 
     private ?PDOStatement $insertStmt = null;
 
@@ -31,7 +31,7 @@ class SqlBaseDriver extends BaseDriver implements DriverInterface
         return SqlGenericRepository::class;
     }
 
-    public function save(object $entity): bool
+    public function save(object $entity): void
     {
         $metadata = $this->getMetadata(get_class($entity));
 
@@ -66,8 +66,6 @@ class SqlBaseDriver extends BaseDriver implements DriverInterface
             throw new \Exception('Execution an insert query returns false. SQLSTATE error code: ' . $errInfo[0] . '; error code: ' . $errInfo[1] . '; message: ' . $errInfo[2]);
         }
 
-        // @TODO execute the query
-
         if($metadata->getPkValue($entity) === null) {
             $insertedId = $this->pdo->lastInsertId();
             if(!$insertedId) {
@@ -78,18 +76,16 @@ class SqlBaseDriver extends BaseDriver implements DriverInterface
 
         $repository = $this->getRepository(get_class($entity));
         $repository->attach($entity);
-
-        return true;
     }
 
-    public function update(object $entity): bool
+    public function update(object $entity): void
     {
-        // TODO: Implement update() method.
+        throw new \Exception('@TODO: Implement ' . __METHOD__ . ' method.');
     }
 
-    public function delete(object $entity): bool
+    public function delete(object $entity): void
     {
-        // TODO: Implement delete() method.
+        throw new \Exception('@TODO: Implement ' . __METHOD__ . ' method.');
     }
 
     public function getPdo(): PDO

@@ -53,18 +53,18 @@ class EntityManager implements EntityManagerInterface
         return $this->getDriver()->getRepository($entityClass);
     }
 
-    public function save(object $entity): bool
+    public function save(object $entity): void
     {
-        return $this->driver->save($entity);
+        $this->driver->save($entity);
     }
 
-    public function update(object $entity): bool
+    public function update(object $entity): void
     {
-        return $this->driver->update($entity);
+        $this->driver->update($entity);
     }
 
-    public function delete(object $entity): bool
+    public function delete(object $entity): void
     {
-        return $this->driver->delete($entity);
+        $this->driver->delete($entity);
     }
 }

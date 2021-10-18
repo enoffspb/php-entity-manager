@@ -24,9 +24,7 @@ class EntityManagerTest extends BaseTest
         $entity = new Example();
         $entity->name = 'Test entity';
 
-        $res = $this->getEntityManager()->save($entity);
-
-        $this->assertTrue($res);
+        $this->getEntityManager()->save($entity);
         $this->assertNotNull($entity->getId());
 
         return $entity->getId();
@@ -36,7 +34,6 @@ class EntityManagerTest extends BaseTest
     {
         $repository = $this->getEntityManager()->getRepository(Example::class);
         $this->assertInstanceOf(RepositoryInterface::class, $repository);
-//        $entity = $repository->getById(1); $entity->
     }
 
     /**
@@ -68,8 +65,7 @@ class EntityManagerTest extends BaseTest
     {
         $entity->name = 'New name';
 
-        $res = $this->getEntityManager()->update($entity);
-        $this->assertTrue($res);
+        $this->getEntityManager()->update($entity);
 
         $entityId = $entity->getId();
 

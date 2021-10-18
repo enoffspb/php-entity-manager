@@ -18,7 +18,7 @@ class InMemoryDriver extends BaseDriver implements DriverInterface
         return InMemoryGenericRepository::class;
     }
 
-    public function save(object $entity): bool
+    public function save(object $entity): void
     {
         $entityClass = get_class($entity);
         $metadata = $this->getMetadata($entityClass);
@@ -30,18 +30,14 @@ class InMemoryDriver extends BaseDriver implements DriverInterface
 
         $repository = $this->getRepository(get_class($entity));
         $repository->attach($entity);
-
-        return true;
     }
 
-    public function update(object $entity): bool
+    public function update(object $entity): void
     {
         $this->cacheEntity($entity);
-
-        return true;
     }
 
-    public function delete(object $entity): bool
+    public function delete(object $entity): void
     {
         $entityClass = get_class($entity);
         $metadata = $this->getMetadata($entityClass);
@@ -50,11 +46,7 @@ class InMemoryDriver extends BaseDriver implements DriverInterface
 
         if(isset($this->storage[$entityClass]) && isset($this->storage[$entityClass][$id])) {
             unset($this->storage[$entityClass][$id]);
-
-            return true;
         }
-
-        return false;
     }
 
     /**
