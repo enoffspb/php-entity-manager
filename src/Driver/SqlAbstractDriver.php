@@ -2,17 +2,20 @@
 
 namespace EnoffSpb\EntityManager\Driver;
 
-use EnoffSpb\EntityManager\Driver\MySql\MySqlGenericRepository;
 use EnoffSpb\EntityManager\Interfaces\DriverInterface;
+use EnoffSpb\EntityManager\Repository\SqlGenericRepository;
+
+use PDO;
+use PDOStatement;
 
 abstract class SqlAbstractDriver extends BaseDriver implements DriverInterface
 {
-    protected string $identifierQuote = '"';
-    protected string $valueQuote = "'";
+    public string $identifierQuote = '"';
+    public string $valueQuote = "'";
 
-    protected \PDO $pdo;
+    protected PDO $pdo;
 
-    private ?\PDOStatement $insertStmt = null;
+    private ?PDOStatement $insertStmt = null;
 
     public function __construct(?string $dsn = null, ?string $user = null, ?string $password = null, array $options = [])
     {
@@ -20,12 +23,12 @@ abstract class SqlAbstractDriver extends BaseDriver implements DriverInterface
             throw new \Exception('Parameter $dsn of ' . get_class($this) . ' cannot be null.');
         }
 
-        $this->pdo = new \PDO($dsn, $user, $password);
+        $this->pdo = new PDO($dsn, $user, $password);
     }
 
     public function getGenericRepositoryClass(): string
     {
-        return MySqlGenericRepository::class;
+        return SqlGenericRepository::class;
     }
 
     public function save(object $entity): bool
@@ -87,5 +90,10 @@ abstract class SqlAbstractDriver extends BaseDriver implements DriverInterface
     public function delete(object $entity): bool
     {
         // TODO: Implement delete() method.
+    }
+
+    public function getPdo(): PDO
+    {
+        return $this->pdo;
     }
 }

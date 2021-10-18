@@ -6,6 +6,9 @@ use EnoffSpb\EntityManager\Interfaces\RepositoryInterface;
 use EnoffSpb\EntityManager\Driver\InMemory\InMemoryGenericRepository;
 use EnoffSpb\EntityManager\Tests\Entity\Example;
 
+/**
+ * @TODO
+ */
 class RepositoryTest extends BaseTest
 {
     private static ?RepositoryInterface $repository = null;
@@ -34,7 +37,8 @@ class RepositoryTest extends BaseTest
     {
         if(self::$repository === null) {
             $metadata = $this->getEntityManager()->getDriver()->createMetadata(Example::class, self::$entitiesConfig[Example::class]);
-            self::$repository = new InMemoryGenericRepository($metadata, $this->getEntityManager()->getDriver());
+            $repositoryClass = $this->getEntityManager()->getDriver()->getGenericRepositoryClass();
+            self::$repository = new $repositoryClass($metadata, $this->getEntityManager()->getDriver());
         }
 
         return self::$repository;
@@ -48,18 +52,22 @@ class RepositoryTest extends BaseTest
         $this->assertInstanceOf(Example::class, $entity);
     }
 
+    public function testGetNonExistsEntity()
+    {
+        $repository = $this->getRepository();
+        $entity = $repository->getById(-1);
+        $this->assertNull($entity);
+    }
+
     public function testGetList()
     {
         $repository = $this->getRepository();
-
-        $allEntities = $repository->getList([/* empty criteria */]);
-        $this->assertCount(count(self::$entitiesData), $allEntities);
 
         $entities = $repository->getList([
             'name' => '1st entity'
         ]);
 
-        $this->assertCount(1, $entities);
+        $this->assertGreaterThan(0, $entities);
 
         /**
          * @var Example $entity

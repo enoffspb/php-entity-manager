@@ -137,4 +137,20 @@ class EntityMetadata
 
         return $fields;
     }
+
+    public function setValues(object $entity, array $values): void
+    {
+        $columns = $this->getMapping();
+
+        foreach($columns as $column) {
+            $setter = $column->setter;
+
+            if($setter !== null) {
+                $entity->$setter($values[$column->field]);
+            } else {
+                $attribute = $column->attribute;
+                $entity->$attribute = $values[$column->field];
+            }
+        }
+    }
 }
