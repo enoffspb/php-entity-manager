@@ -9,6 +9,9 @@ use EnoffSpb\EntityManager\Repository\SqlGenericRepository;
 use PDO;
 use PDOStatement;
 
+/**
+ * @todo Review and do refactoring all the exceptions in the class
+ */
 class SqlBaseDriver extends BaseDriver implements DriverInterface
 {
     public string $identifierQuote = '"';
@@ -17,6 +20,7 @@ class SqlBaseDriver extends BaseDriver implements DriverInterface
     private PDO $pdo;
 
     private ?PDOStatement $insertStmt = null;
+    private ?PDOStatement $deleteStmt = null;
 
     public function __construct(?string $dsn = null, ?string $user = null, ?string $password = null, array $options = [])
     {
@@ -52,7 +56,12 @@ class SqlBaseDriver extends BaseDriver implements DriverInterface
             $query = "INSERT INTO $tableName (" . implode(', ', $queryColumns) . ") VALUES (" .
                 implode(', ', $placeholders) .
             ")";
-            $this->insertStmt = $this->pdo->prepare($query);
+            $stmt = $this->pdo->prepare($query);
+            if($this->insertStmt === false) {
+                $errInfo = $this->pdo->errorInfo();
+                throw new \Exception('Cannot prepare a statement for an insert query. SQLSTATE error code: ' . $errInfo[0] . '; error code: ' . $errInfo[1] . '; message: ' . $errInfo[2]);
+            }
+            $this->insertStmt = $stmt;
         }
 
         $r = $this->insertStmt->execute($queryValues);
@@ -124,27 +133,58 @@ class SqlBaseDriver extends BaseDriver implements DriverInterface
         $query = "UPDATE $tableName SET " . implode(', ', $setExpressions) .
             " WHERE $pkFieldName = ?";
 
-        $stmt = $this->getPdo()->prepare($query);
+        $stmt = $this->pdo->prepare($query);
         if($stmt === false) {
             /**
              * @todo Create and use SqlException and pass pdo->errorInfo() to it
              */
-            throw new \Exception('Cannot prepare a statement for an update query.');
+            $errInfo = $this->pdo->errorInfo();
+            throw new \Exception('Cannot prepare a statement for an update query. SQLSTATE error code: ' . $errInfo[0] . '; error code: ' . $errInfo[1] . '; message: ' . $errInfo[2]);
         }
 
         $params[] = $id;
         $res = $stmt->execute($params);
         if($res === false) {
-            $errInfo = $this->getPdo()->errorInfo();
+            unset($stmt);
+            $errInfo = $this->pdo->errorInfo();
             throw new \Exception('Execution an update query returns false. SQLSTATE error code: ' . $errInfo[0] . '; error code: ' . $errInfo[1] . '; message: ' . $errInfo[2]);
         }
+
+        unset($stmt);
 
         $repository->storeValues($entity);
     }
 
     public function delete(object $entity): void
     {
-        throw new \Exception('@TODO: Implement ' . __METHOD__ . ' method.');
+        $metadata = $this->getMetadata(get_class($entity));
+        $id = $metadata->getPkValue($entity);
+
+        if($this->deleteStmt === null) {
+            $q = $this->identifierQuote;
+            $tableName = $q . $metadata->tableName . $q;
+            $pkField = $q . ($metadata->getMapping()[$metadata->primaryKey]->field) . $q;
+            $query = "DELETE FROM $tableName WHERE $pkField = ?";
+            $stmt = $this->pdo->prepare($query);
+            if($stmt === false) {
+                $errInfo = $this->pdo->errorInfo();
+                throw new \Exception('Cannot prepare a statement for an update query. SQLSTATE error code: ' . $errInfo[0] . '; error code: ' . $errInfo[1] . '; message: ' . $errInfo[2]);
+            }
+            $this->deleteStmt = $stmt;
+        }
+
+        $res = $this->deleteStmt->execute([
+            $id
+        ]);
+        if($res === false) {
+            $errInfo = $this->pdo->errorInfo();
+            throw new \Exception('Execution a delete query returns false. SQLSTATE error code: ' . $errInfo[0] . '; error code: ' . $errInfo[1] . '; message: ' . $errInfo[2]);
+        }
+
+        $repository = $this->getRepository(get_class($entity));
+        $repository->detach($entity);
+
+        unset($entity);
     }
 
     public function getPdo(): PDO
