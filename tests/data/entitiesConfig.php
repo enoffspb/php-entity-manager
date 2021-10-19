@@ -12,9 +12,9 @@ return [
                 'setter' => 'setId'
             ],
             'name' => [],
-            'custom' => [
-                'getter' => 'getCustom',
-                'setter' => 'setCustom'
+            'order' => [
+                'getter' => 'getOrder',
+                'setter' => 'setOrder'
             ]
         ]
     ]

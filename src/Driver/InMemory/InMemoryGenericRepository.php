@@ -46,6 +46,32 @@ class InMemoryGenericRepository extends AbstractRepository implements Repository
             }
         }
 
+        if($orderBy !== null) {
+            usort($result, function($a, $b) use($orderBy) {
+                $aValues = $this->metadata->getValues($a);
+                $bValues = $this->metadata->getValues($b);
+
+                foreach($orderBy as $field => $direction) {
+                    $desc = $direction === SORT_DESC || strtoupper($direction) === 'DESC';
+
+                    $aValue = $aValues[$field];
+                    $bValue = $bValues[$field];
+
+                    if($aValue === $bValue) {
+                        continue;
+                    }
+
+                    if($desc) {
+                        return $aValue < $bValue ? -1 : 1;
+                    } else {
+                        return $aValue > $bValue ? -1 : 1;
+                    }
+                }
+
+                return 0;
+            });
+        }
+
         return $result;
     }
 

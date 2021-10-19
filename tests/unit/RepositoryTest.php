@@ -3,7 +3,6 @@
 namespace EnoffSpb\EntityManager\Tests\Unit;
 
 use EnoffSpb\EntityManager\Interfaces\RepositoryInterface;
-use EnoffSpb\EntityManager\Driver\InMemory\InMemoryGenericRepository;
 use EnoffSpb\EntityManager\Tests\Entity\Example;
 
 /**
@@ -14,9 +13,9 @@ class RepositoryTest extends BaseTest
     private static ?RepositoryInterface $repository = null;
 
     private static array $entitiesData = [
-        ['name' => '1st entity'],
-        ['name' => '2nd entity'],
-        ['name' => '3rd entity'],
+        ['name' => '1st entity', 'setOrder' => 1],
+        ['name' => '2nd entity', 'setOrder' => 2],
+        ['name' => '3rd entity', 'setOrder' => 3],
     ];
 
     public static function setUpBeforeClass(): void
@@ -27,12 +26,19 @@ class RepositoryTest extends BaseTest
         foreach(self::$entitiesData as $entityData) {
             $entity = new Example();
             foreach($entityData as $k => $v) {
-                $entity->$k = $v;
+                if(method_exists($entity, $k)) {
+                    $entity->$k($v);
+                } else {
+                    $entity->$k = $v;
+                }
             }
             self::$entityManager->save($entity);
         }
     }
 
+    /**
+     * @return RepositoryInterface<Example>
+     */
     private function getRepository(): RepositoryInterface
     {
         if(self::$repository === null) {
@@ -81,5 +87,26 @@ class RepositoryTest extends BaseTest
         $repository = $this->getRepository();
         $entity = $repository->getById(-1);
         $this->assertNull($entity);
+    }
+
+    public function testOrderAndLimitInGetList()
+    {
+        $repository = $this->getRepository();
+
+        $descBatch = $repository->getList([], [
+            'order' => SORT_DESC
+        ]);
+
+        $ascBatch = $repository->getList([], [
+            'order' => SORT_ASC
+        ]);
+
+        $this->assertNotEmpty($descBatch);
+        $this->assertNotEmpty($ascBatch);
+
+        $firstEntity = $ascBatch[0];
+        $lastEntity = $descBatch[0];
+
+        $this->assertGreaterThan($lastEntity->getOrder(), $firstEntity->getOrder());
     }
 }
