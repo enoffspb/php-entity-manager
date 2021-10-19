@@ -89,13 +89,13 @@ class RepositoryTest extends BaseTest
         $this->assertNull($entity);
     }
 
-    public function testOrderAndLimitInGetList()
+    public function testOrderAndLimit()
     {
         $repository = $this->getRepository();
 
         $descBatch = $repository->getList([], [
             'order' => SORT_DESC
-        ]);
+        ], 2);
 
         $ascBatch = $repository->getList([], [
             'order' => SORT_ASC
@@ -108,5 +108,22 @@ class RepositoryTest extends BaseTest
         $lastEntity = $descBatch[0];
 
         $this->assertGreaterThan($lastEntity->getOrder(), $firstEntity->getOrder());
+
+        $this->assertCount(2, $descBatch);
+    }
+
+    public function testOffset()
+    {
+        $repository = $this->getRepository();
+
+        $firstBatch = $repository->getList([], [
+            'id' => SORT_DESC
+        ], 2, 0);
+
+        $secondBatch = $repository->getList([], [
+            'id' => SORT_DESC
+        ], 2, 1);
+
+        $this->assertEquals($firstBatch[1]->getId(), $secondBatch[0]->getId());
     }
 }

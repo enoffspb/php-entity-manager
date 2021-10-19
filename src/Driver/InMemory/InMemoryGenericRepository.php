@@ -72,6 +72,10 @@ class InMemoryGenericRepository extends AbstractRepository implements Repository
             });
         }
 
+        if($limit !== null) {
+            $result = array_slice($result, $offset ?? null, $limit);
+        }
+
         return $result;
     }
 
