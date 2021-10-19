@@ -107,7 +107,7 @@ class RepositoryTest extends BaseTest
         $firstEntity = $ascBatch[0];
         $lastEntity = $descBatch[0];
 
-        $this->assertGreaterThan($lastEntity->getOrder(), $firstEntity->getOrder());
+        $this->assertGreaterThan($firstEntity->getOrder(), $lastEntity->getOrder());
 
         $this->assertCount(2, $descBatch);
     }

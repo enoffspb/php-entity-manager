@@ -23,6 +23,7 @@ class EntityManagerTest extends BaseTest
     {
         $entity = new Example();
         $entity->name = 'Test entity';
+        $entity->setOrder(1);
 
         $this->getEntityManager()->save($entity);
         $this->assertNotNull($entity->getId());

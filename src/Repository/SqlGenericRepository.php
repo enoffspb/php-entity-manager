@@ -68,8 +68,6 @@ class SqlGenericRepository extends AbstractRepository implements RepositoryInter
      */
     public function getList(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array
     {
-        // @todo build a select query
-
         $q = $this->driver->identifierQuote;
         $tableName = $q . $this->metadata->tableName . $q;
 
@@ -86,11 +84,17 @@ class SqlGenericRepository extends AbstractRepository implements RepositoryInter
             $query .= ' WHERE ' . implode(' AND ', $whereExpressions);
         }
 
-        if($limit !== null) {
-            $query .= ' LIMIT ' . $limit;
-            if($offset) {
-                $query .= ',' . $offset;
+        if(!empty($orderBy)) {
+            $orderParts = [];
+            foreach($orderBy as $field => $direction) {
+                $desc = $direction === SORT_DESC || strtoupper($direction) === 'DESC';
+                $orderParts[] = $q . $field . $q . ' ' . ($desc ? 'DESC' : 'ASC');
             }
+            $query .= ' ORDER BY ' . implode(', ', $orderParts);
+        }
+
+        if($limit !== null || $offset !== null) {
+            $this->applyLimitAndOffsetToSql($query, $limit, $offset);
         }
 
         $pdo = $this->driver->getPdo();
@@ -121,5 +125,15 @@ class SqlGenericRepository extends AbstractRepository implements RepositoryInter
         }
 
         return $result;
+    }
+
+    protected function applyLimitAndOffsetToSql(string &$query, ?int $limit = null, ?int $offset = null): void
+    {
+        if($limit !== null) {
+            $query .= ' LIMIT ' . $limit;
+        }
+        if($offset !== null) {
+            $query .= ' OFFSET ' . $offset;
+        }
     }
 }

@@ -6,7 +6,7 @@ class Example
 {
     private ?int $id = null;
     public ?string $name = null;
-    private ?int $order = null;
+    private int $order;
 
     public function getId(): ?int
     {
@@ -18,7 +18,7 @@ class Example
         $this->id = $id;
     }
 
-    public function setOrder(?int $order)
+    public function setOrder(int $order)
     {
         $this->order = $order;
     }

@@ -62,9 +62,9 @@ class InMemoryGenericRepository extends AbstractRepository implements Repository
                     }
 
                     if($desc) {
-                        return $aValue < $bValue ? -1 : 1;
-                    } else {
                         return $aValue > $bValue ? -1 : 1;
+                    } else {
+                        return $aValue < $bValue ? -1 : 1;
                     }
                 }
 
