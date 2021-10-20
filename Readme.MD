@@ -7,6 +7,8 @@ EntityManager is a PHP library is used to as a simple, independent data-persist 
 tiny entities without its associations to the persistence layer. 
 It is useful for OOAD and allows to distinguish a problem domain from a technical one.
 
+Drivers implemented for **MySql**, **PostgreSql**, **InMemory** (for auto testing);
+
 A public interface for using EntityManager:
 ```php
 namespace EnoffSpb\EntityManager\Interfaces;
@@ -25,7 +27,7 @@ interface EntityManagerInterface
 interface RepositoryInterface
 {
     public function getById($id): ?object;
-    public function getList($criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array;
+    public function getList(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array;
 }
 ```
 
@@ -61,8 +63,26 @@ foreach($list as $entity) {
 }
 ```
 
-Configuration
+Creating instance of EntityManager
 ------------------------
+
+Create a driver and an entities config and pass it to EntityManager. 
+```php
+use EnoffSpb\EntityManager\EntityManager;
+use EnoffSpb\EntityManager\Driver\MySql\MysqlDriver;
+
+// Create a driver for DB, e.g. MySqlDriver
+$driver = new MySqlDriver($dsn = 'mysql:host=localhost;dbname=db', $user = 'user', $password = 'pwd');
+
+// Describe an entities config (see full format below) 
+$entitiesConfig = [
+    MyEntity::class => [/** config is here */],
+    AnotherEntity::class => []
+];
+
+// Create an instance of EntityManager
+$entityManager = new EntityManager($driver, $entitiesConfig);
+```
 
 An entities config:
 ```php
