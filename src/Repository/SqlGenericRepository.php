@@ -110,16 +110,30 @@ class SqlGenericRepository extends AbstractRepository implements RepositoryInter
             throw new \Exception('Cannot execute a SQL query. SQLSTATE error code: ' . $errInfo[0] . '; error code: ' . $errInfo[1] . '; message: ' . $errInfo[2]);
         }
 
-        /**
-         * @todo Implement a merge strategy. If an entity has already attached - what do we need to do?
-         * @todo Should we update fields of an exists entity? It seems as only one possible case.
-         */
         $result = [];
         while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $entity = new $this->metadata->entityClass;
-            $this->metadata->setValues($entity, $row);
 
-            $this->attach($entity);
+            $this->metadata->setValues($entity, $row);
+            $id = $this->metadata->getPkValue($entity);
+            if(!isset($this->entitiesCache[$id])) {
+                $this->attach($entity);
+            } else {
+                // @todo Close an issue about a merge strategy
+                // There are three states of entity values:
+                // - stored values
+                // - object values
+                // - new values from db
+                //
+                // @todo Create mergeEntities() method
+
+                // If an entity has already attached to the repository, we need to return the instance from cache
+
+                $cachedEntity = $this->entitiesCache[$id];
+
+                unset($entity);
+                $entity = $cachedEntity;
+            }
 
             $result[] = $entity;
         }

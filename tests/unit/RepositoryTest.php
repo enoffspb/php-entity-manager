@@ -80,6 +80,9 @@ class RepositoryTest extends BaseTest
         $entity = $repository->getById($id);
         $this->assertNotNull($entity);
         $this->assertInstanceOf(Example::class, $entity);
+
+        $sameInstance = $repository->getById($id);
+        $this->assertSame($entity, $sameInstance);
     }
 
     public function testGetNonExistsEntity()
@@ -96,6 +99,8 @@ class RepositoryTest extends BaseTest
         $descBatch = $repository->getList([], [
             'order' => SORT_DESC
         ], 2);
+
+        $this->assertLessThan(3, count($descBatch));
 
         $ascBatch = $repository->getList([], [
             'order' => SORT_ASC
@@ -120,10 +125,35 @@ class RepositoryTest extends BaseTest
             'id' => SORT_DESC
         ], 2, 0);
 
+        $this->assertLessThan(3, count($firstBatch));
+
         $secondBatch = $repository->getList([], [
             'id' => SORT_DESC
         ], 2, 1);
 
+        $this->assertLessThan(3, count($secondBatch));
+
         $this->assertEquals($firstBatch[1]->getId(), $secondBatch[0]->getId());
+    }
+
+    public function testGetCachedEntities()
+    {
+        $repository = $this->getRepository();
+
+        $list1 = $repository->getList([], [
+            'id' => SORT_DESC
+        ], 1);
+        $this->assertNotEmpty($list1);
+
+        $firstEntity = $list1[0];
+
+        $list2 = $repository->getList([
+            'id' => $firstEntity->getId()
+        ], null, 1);
+        $this->assertNotEmpty($list2);
+
+        $secondEntity = $list2[0];
+
+        $this->assertSame($firstEntity, $secondEntity);
     }
 }
