@@ -3,7 +3,7 @@ Entity Manager
 ```
 ! WORK IN PROGRESS !
 ```
-EntityManager is a PHP library is used to as a simple, independent data-persist layer for working with
+EntityManager is a PHP library is used to as a simple, independent data persistence layer for working with
 tiny entities without its associations to the persistence layer. 
 It is useful for OOAD and allows to distinguish a problem domain from a technical one.
 
