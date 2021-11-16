@@ -1,5 +1,10 @@
-Entity Manager
+Entity Manager for PHP
 ==============
+
+![Testing](https://github.com/enoffspb/php-entity-manager/actions/workflows/testing.yml/badge.svg)
+![PHPStan Level 7](https://img.shields.io/badge/PHPStan-level%207-brightgreen)
+![Docs](https://enoffspb.github.io/Images/docs-badge.svg)
+
 ```
 ! WORK IN PROGRESS !
 ```
@@ -7,7 +12,7 @@ EntityManager is a PHP library is used to as a simple, independent data persiste
 tiny entities without its associations to the persistence layer. 
 It is useful for OOAD and allows to distinguish a problem domain from a technical one.
 
-Drivers implemented for **MySql**, **PostgreSql**, **InMemory** (for auto testing);
+Drivers are implemented for **MySql**, **PostgreSql**, **InMemory** (for auto testing);
 
 A public interface for using EntityManager:
 ```php
