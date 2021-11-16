@@ -10,13 +10,17 @@ use EnoffSpb\EntityManager\Repository\GenericRepository;
 class EntityManager implements EntityManagerInterface
 {
     protected DriverInterface $driver;
+
+    /**
+     * @var array<string, array>
+     */
     protected array $entitiesConfig;
 
     /**
      * EntityManager constructor.
      *
      * @param DriverInterface $driver One of available drivers (InMemoryDriver, MysqlDriver, etc)
-     * @param array $entitiesConfig Format: [Entity::class => [* entity config, properties of EntityMetadata *]]
+     * @param array<string, array> $entitiesConfig Format: [Entity::class => [* entity config, properties of EntityMetadata *]]
      */
     public function __construct(DriverInterface $driver, array $entitiesConfig = [])
     {
@@ -30,14 +34,17 @@ class EntityManager implements EntityManagerInterface
     }
 
     /**
-     * @param array $entitiesConfig Format: [Entity::class => [* entity config, properties of EntityMetadata *]]
+     * @param array<string, array> $entitiesConfig Format: [Entity::class => [* entity config, properties of EntityMetadata *]]
      */
-    public function setEntitiesConfig(array $entitiesConfig)
+    public function setEntitiesConfig(array $entitiesConfig): void
     {
         $this->entitiesConfig = $entitiesConfig;
         $this->driver->setEntitiesConfig($entitiesConfig);
     }
 
+    /**
+     * @return array<string, array>
+     */
     public function getEntitiesConfig(): array
     {
         return $this->entitiesConfig;

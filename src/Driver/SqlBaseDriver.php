@@ -22,10 +22,17 @@ class SqlBaseDriver extends BaseDriver implements DriverInterface
     private ?PDOStatement $insertStmt = null;
     private ?PDOStatement $deleteStmt = null;
 
+    /**
+     * @param array<string,mixed> $options
+     */
     public function __construct(?string $dsn = null, ?string $user = null, ?string $password = null, array $options = [])
     {
         if($dsn === null) {
             throw new \Exception('Parameter $dsn of ' . get_class($this) . ' cannot be null.');
+        }
+
+        if($options) {
+            // @todo implement connection options
         }
 
         $this->pdo = new PDO($dsn, $user, $password);
@@ -60,7 +67,7 @@ class SqlBaseDriver extends BaseDriver implements DriverInterface
                 implode(', ', $placeholders) .
             ")";
             $stmt = $this->pdo->prepare($query);
-            if($this->insertStmt === false) {
+            if($stmt == false) {
                 $errInfo = $this->pdo->errorInfo();
                 throw new \Exception('Cannot prepare a statement for an insert query. SQLSTATE error code: ' . $errInfo[0] . '; error code: ' . $errInfo[1] . '; message: ' . $errInfo[2]);
             }
@@ -101,7 +108,7 @@ class SqlBaseDriver extends BaseDriver implements DriverInterface
         }
 
         /**
-         * @var $repository AbstractRepository
+         * @var AbstractRepository<object> $repository
          */
         $repository = $this->getRepository(get_class($entity));
 
@@ -137,7 +144,7 @@ class SqlBaseDriver extends BaseDriver implements DriverInterface
             " WHERE $pkFieldName = ?";
 
         $stmt = $this->pdo->prepare($query);
-        if($stmt === false) {
+        if($stmt == false) {
             /**
              * @todo Create and use SqlException and pass pdo->errorInfo() to it
              */
@@ -169,7 +176,7 @@ class SqlBaseDriver extends BaseDriver implements DriverInterface
             $pkField = $q . ($metadata->getMapping()[$metadata->primaryKey]->field) . $q;
             $query = "DELETE FROM $tableName WHERE $pkField = ?";
             $stmt = $this->pdo->prepare($query);
-            if($stmt === false) {
+            if($stmt == false) {
                 $errInfo = $this->pdo->errorInfo();
                 throw new \Exception('Cannot prepare a statement for an update query. SQLSTATE error code: ' . $errInfo[0] . '; error code: ' . $errInfo[1] . '; message: ' . $errInfo[2]);
             }

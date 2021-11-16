@@ -4,13 +4,23 @@ namespace EnoffSpb\EntityManager;
 
 class EntityMetadata
 {
+    /**
+     * @var class-string
+     */
     public string $entityClass;
+
     public ?string $repositoryClass = null;
     public string $tableName;
     public string $primaryKey = 'id';
 
+    /**
+     * @var array<string, Column>
+     */
     private array $mapping = [];
 
+    /**
+     * @param array<string,mixed> $config
+     */
     public function __construct(array $config = [])
     {
         foreach($config as $k => $v) {
@@ -43,13 +53,16 @@ class EntityMetadata
     }
 
     /**
-     * @return Column[]
+     * @return array<string, Column>
      */
     public function getMapping(): array
     {
         return $this->mapping;
     }
 
+    /**
+     * @param array<string,Column> $mapping
+     */
     public function setMapping(array $mapping): void
     {
         $this->mapping = $mapping;
@@ -114,6 +127,9 @@ class EntityMetadata
         return $entity->$attr;
     }
 
+    /**
+     * @return array<string,mixed>
+     */
     public function getValues(object $entity): array
     {
         $columns = $this->getMapping();
@@ -138,6 +154,10 @@ class EntityMetadata
         return $fields;
     }
 
+    /**
+     * @param object $entity
+     * @param array<string,mixed> $values
+     */
     public function setValues(object $entity, array $values): void
     {
         $columns = $this->getMapping();

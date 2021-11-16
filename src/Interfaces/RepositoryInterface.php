@@ -14,8 +14,8 @@ interface RepositoryInterface
     public function getById($id): ?object;
 
     /**
-     * @param array $criteria
-     * @param array|null $orderBy
+     * @param array<mixed> $criteria
+     * @param array<string, int|string>|null $orderBy
      * @param int|null $limit
      * @param int|null $offset
      * @return T[]

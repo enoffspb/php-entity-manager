@@ -8,20 +8,34 @@ use EnoffSpb\EntityManager\Interfaces\RepositoryInterface;
 
 abstract class BaseDriver implements DriverInterface
 {
+    /**
+     * @var EntityMetadata[]
+     */
     protected array $metaData = [];
+
+    /**
+     * @var array<string, array>
+     */
     protected array $entitiesConfig = [];
+
+    /**
+     * @var array<string, RepositoryInterface<object>>
+     */
     protected array $repositories = [];
 
-    public function __construct(?string $dsn = null, ?string $user = null, ?string $password = null, array $options = [])
-    {
-        // ...
-    }
-
+    /**
+     * @param array<string, mixed> $entitiesConfig
+     */
     public function setEntitiesConfig(array $entitiesConfig): void
     {
         $this->entitiesConfig = $entitiesConfig;
     }
 
+    /**
+     * @param class-string $entityClass
+     * @param array<string, mixed> $entityConfig
+     * @return EntityMetadata
+     */
     public function createMetadata(string $entityClass, array $entityConfig): EntityMetadata
     {
         $metadata = new EntityMetadata($entityConfig);
@@ -30,6 +44,9 @@ abstract class BaseDriver implements DriverInterface
         return $metadata;
     }
 
+    /**
+     * @param class-string $entityClass
+     */
     public function getMetadata(string $entityClass): EntityMetadata
     {
         if(isset($this->metaData[$entityClass])) {
@@ -45,10 +62,18 @@ abstract class BaseDriver implements DriverInterface
         return $metadata;
     }
 
+    /**
+     * @template T of object
+     * @param class-string<T> $entityClass
+     * @return RepositoryInterface<T>
+     */
     public function getRepository(string $entityClass): RepositoryInterface
     {
         if(isset($this->repositories[$entityClass])) {
-            return $this->repositories[$entityClass];
+            /**
+             * @var RepositoryInterface<T>
+             */
+            $repository = $this->repositories[$entityClass];
         }
 
         $metadata = $this->getMetadata($entityClass);

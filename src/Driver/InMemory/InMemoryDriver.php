@@ -11,7 +11,20 @@ use EnoffSpb\EntityManager\Driver\InMemory\InMemoryGenericRepository;
  */
 class InMemoryDriver extends BaseDriver implements DriverInterface
 {
+    /**
+     * @var array<string, array<object>>
+     */
     public array $storage = [];
+
+    /**
+     * @param array<string, mixed> $options
+     */
+    public function __construct(?string $dsn = null, ?string $user = null, ?string $password = null, array $options = [])
+    {
+        if($dsn || $user || $password || $options) {
+            // use variables for establishing a connection
+        }
+    }
 
     public function getGenericRepositoryClass(): string
     {
@@ -81,7 +94,7 @@ class InMemoryDriver extends BaseDriver implements DriverInterface
      * @template T of object
      * @param class-string<T> $entityClass
      * @param mixed $id
-     * @return T|null
+     * @returns T|null
      */
     public function getEntity(string $entityClass, $id): ?object
     {

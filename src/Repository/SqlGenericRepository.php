@@ -11,6 +11,9 @@ use PDOStatement;
 /**
  * @template T of object
  *
+ * @extends AbstractRepository<T>
+ * @implements RepositoryInterface<T>
+ *
  * @property SqlBaseDriver $driver
  */
 class SqlGenericRepository extends AbstractRepository implements RepositoryInterface
@@ -18,7 +21,7 @@ class SqlGenericRepository extends AbstractRepository implements RepositoryInter
     private ?PDOStatement $getByIdStmt = null;
 
     /**
-     * @return T|null
+     * @returns T|null
      */
     public function getById($id): ?object
     {
@@ -55,6 +58,9 @@ class SqlGenericRepository extends AbstractRepository implements RepositoryInter
         // @todo Move creation of an entity to a separate method, further it allows to overload a creation process.
         // @todo Do it for getList() also.
 
+        /**
+         * @var T
+         */
         $entity = new $this->metadata->entityClass();
         $this->metadata->setValues($entity, $data);
 
@@ -87,7 +93,7 @@ class SqlGenericRepository extends AbstractRepository implements RepositoryInter
         if(!empty($orderBy)) {
             $orderParts = [];
             foreach($orderBy as $field => $direction) {
-                $desc = $direction === SORT_DESC || strtoupper($direction) === 'DESC';
+                $desc = $direction == SORT_DESC || strtoupper((string) $direction) == 'DESC';
                 $orderParts[] = $q . $field . $q . ' ' . ($desc ? 'DESC' : 'ASC');
             }
             $query .= ' ORDER BY ' . implode(', ', $orderParts);
@@ -99,7 +105,7 @@ class SqlGenericRepository extends AbstractRepository implements RepositoryInter
 
         $pdo = $this->driver->getPdo();
         $stmt = $pdo->prepare($query);
-        if($stmt === false) {
+        if($stmt == false) {
             $errInfo = $pdo->errorInfo();
             throw new \Exception('Cannot prepare a statement for a select query. SQLSTATE error code: ' . $errInfo[0] . '; error code: ' . $errInfo[1] . '; message: ' . $errInfo[2]);
         }
@@ -112,6 +118,9 @@ class SqlGenericRepository extends AbstractRepository implements RepositoryInter
 
         $result = [];
         while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            /**
+             * @var T
+             */
             $entity = new $this->metadata->entityClass;
 
             $this->metadata->setValues($entity, $row);

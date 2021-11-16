@@ -2,12 +2,15 @@
 
 namespace EnoffSpb\EntityManager\Driver\InMemory;
 
+use EnoffSpb\EntityManager\EntityMetadata;
+use EnoffSpb\EntityManager\Interfaces\DriverInterface;
 use EnoffSpb\EntityManager\Interfaces\RepositoryInterface;
 use EnoffSpb\EntityManager\Repository\AbstractRepository;
 
 /**
  * @template T of object
  * @implements RepositoryInterface<T>
+ * @extends AbstractRepository<T>
  *
  * @property InMemoryDriver $driver
  */
@@ -22,12 +25,13 @@ class InMemoryGenericRepository extends AbstractRepository implements Repository
          * @var T|null $entity
          */
         $entity = $this->driver->getEntity($this->metadata->entityClass, $id);
+
         return $entity;
     }
 
     /**
-     * @param array $criteria
-     * @param array|null $orderBy
+     * @param array<mixed> $criteria
+     * @param array<string, int|string>|null $orderBy
      * @param int|null $limit
      * @param int|null $offset
      * @return T[]
@@ -52,7 +56,7 @@ class InMemoryGenericRepository extends AbstractRepository implements Repository
                 $bValues = $this->metadata->getValues($b);
 
                 foreach($orderBy as $field => $direction) {
-                    $desc = $direction === SORT_DESC || strtoupper($direction) === 'DESC';
+                    $desc = $direction === SORT_DESC || strtoupper((string) $direction) === 'DESC';
 
                     $aValue = $aValues[$field];
                     $bValue = $bValues[$field];
@@ -73,13 +77,19 @@ class InMemoryGenericRepository extends AbstractRepository implements Repository
         }
 
         if($limit !== null) {
-            $result = array_slice($result, $offset ?? null, $limit);
+            $result = array_slice($result, $offset ?? 0, $limit);
         }
 
+        /**
+         * @var T[]
+         */
         return $result;
     }
 
-    private function isMatched(object $entity, $criteria): bool
+    /**
+     * @param array<string, mixed> $criteria
+     */
+    private function isMatched(object $entity, array $criteria): bool
     {
         $matched = true;
 

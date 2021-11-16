@@ -16,6 +16,11 @@ abstract class AbstractRepository implements RepositoryInterface
     protected DriverInterface $driver;
 
     /**
+     * @var array<mixed,array>
+     */
+    private array $storedValues = [];
+
+    /**
      * @var T[]
      */
     protected array $entitiesCache = [];
@@ -51,8 +56,6 @@ abstract class AbstractRepository implements RepositoryInterface
         $this->clearStoredValues($entity);
     }
 
-    private array $storedValues = [];
-
     /**
      * @param T $entity
      */
@@ -66,6 +69,7 @@ abstract class AbstractRepository implements RepositoryInterface
 
     /**
      * @param T $entity
+     * @return array<mixed,array>
      */
     public function getStoredValues(object $entity): ?array
     {
