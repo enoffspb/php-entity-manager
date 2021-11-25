@@ -3,7 +3,7 @@ Entity Manager for PHP
 
 ![Testing](https://github.com/enoffspb/php-entity-manager/actions/workflows/testing.yml/badge.svg)
 ![PHPStan Level 7](https://img.shields.io/badge/PHPStan-level%207-brightgreen)
-![Docs](https://enoffspb.github.io/Images/docs-badge.svg)
+![Docs](https://enoffspb.github.io/images/docs-badge.svg)
 
 ```
 ! WORK IN PROGRESS !
